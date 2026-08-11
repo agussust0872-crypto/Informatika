@@ -100,6 +100,12 @@
                         </select>
                     </div>
 
+                    <!-- Tombol Salin Link Kelas -->
+                    <button onclick="window.copyClassLink()" class="p-2 text-blue-600 bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 hover:bg-blue-100 rounded-lg transition-colors text-sm font-semibold flex items-center gap-1.5" title="Salin Link Gabung Kelas">
+                        <i class="fa-solid fa-link text-base"></i>
+                        <span class="hidden lg:inline">Salin Link</span>
+                    </button>
+
                     <!-- Tombol WhatsApp Kelas -->
                     <button onclick="window.shareToWhatsApp()" class="p-2 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400 hover:bg-emerald-100 rounded-lg transition-colors text-sm font-semibold flex items-center gap-1.5" title="Bagikan Link Kelas ke WA">
                         <i class="fa-brands fa-whatsapp text-lg"></i>
@@ -165,6 +171,10 @@
                         <div class="text-[10px] text-blue-200 uppercase font-bold tracking-wider">Kode Kelas</div>
                         <div id="bannerClassCode" class="text-xl font-black tracking-widest text-amber-300">INF-XE</div>
                     </div>
+                    <button onclick="window.copyClassLink()" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold px-4 py-3 rounded-xl transition-all shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Salin Link Kelas</span>
+                    </button>
                     <button onclick="window.openJoinModal()" class="bg-amber-400 hover:bg-amber-300 text-slate-900 text-xs font-bold px-4 py-3 rounded-xl transition-all shadow-md flex items-center gap-2">
                         <i class="fa-solid fa-right-to-bracket"></i>
                         <span>Gabung Kode Lain</span>
@@ -1394,10 +1404,52 @@
             }
         };
 
+        window.getClassInviteURL = function(classCode) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            return `${baseUrl}?code=${classCode || 'INF-XE'}`;
+        };
+
+        window.copyClassLink = function() {
+            const curr = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId) || APP_STATE.classes[0];
+            const inviteUrl = window.getClassInviteURL(curr.code);
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = inviteUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            alert(`Link gabung kelas ${curr.name} berhasil disalin!\n\nLink: ${inviteUrl}`);
+        };
+
         window.shareToWhatsApp = function() {
-            const curr = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId);
-            const text = `Halo, mari bergabung ke kelas LMS Informatika *${curr.name}* dengan Kode Kelas: *${curr.code}*. Buka link web EduKelas Pro!`;
+            const curr = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId) || APP_STATE.classes[0];
+            const inviteUrl = window.getClassInviteURL(curr.code);
+            const text = `Halo! Mari bergabung ke kelas LMS Informatika *${curr.name}*.\n\nKode Kelas: *${curr.code}*\nKlik tautan ini untuk langsung bergabung:\n${inviteUrl}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+        };
+
+        window.checkURLClassParam = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeParam = urlParams.get('code') || urlParams.get('class');
+
+            if (codeParam) {
+                const cleanCode = codeParam.trim().toUpperCase();
+                const matchedClass = APP_STATE.classes.find(c => c.code === cleanCode);
+                
+                if (matchedClass) {
+                    APP_STATE.currentClassId = matchedClass.id;
+                    const codeInput = document.getElementById('joinClassCode');
+                    if (codeInput) codeInput.value = cleanCode;
+                    
+                    if (!APP_STATE.currentUser.joinedClasses.includes(matchedClass.id)) {
+                        APP_STATE.currentUser.joinedClasses.push(matchedClass.id);
+                    }
+                    saveState();
+                    window.openJoinModal();
+                }
+            }
         };
 
         window.contactTeacherWA = function() {
@@ -1444,6 +1496,7 @@
         /* INITALIZATION ON LOAD */
         window.onload = function() {
             loadState();
+            window.checkURLClassParam();
             window.renderAppHeaderAndRole();
             
             // Listen to multi-tab storage sync
@@ -1455,9 +1508,3 @@
     </script>
 </body>
 </html>
-```
-
-### Ringkasan Perbaikan Utama:
-1. **Pencegahan Error ReferenceError**: Seluruh fungsi interaksi seperti `openAdminModal`, `shareToWhatsApp`, `handleLogout`, `switchTab`, `startQuiz`, `exportGradesCSV`, `toggleDarkMode`, dll., diikat langsung ke objek global `window`.
-2. **Penanganan Event Aman & Stabil**: Menggunakan fungsi standar JavaScript vanilla tanpa dependensi external modul yang bermasalah.
-3. **Penyimpanan Cloud & Multi-Tab**: State otomatis tersimpan di LocalStorage dan langsung tersinkron secara *realtime* jika web dibuka di tab peramban atau HP yang berbeda.
