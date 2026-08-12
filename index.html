@@ -405,36 +405,57 @@
             <i class="fa-solid fa-robot"></i>
         </button>
 
-        <div id="aiChatWindow" class="hidden absolute bottom-16 right-0 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-[420px]">
+        <div id="aiChatWindow" class="hidden absolute bottom-16 right-0 w-80 sm:w-96 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-[450px]">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3.5 flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-robot text-amber-300"></i>
                     <div>
-                        <div class="text-xs font-bold leading-tight">EduAssist AI</div>
-                        <div class="text-[10px] text-blue-100">Asisten Pembelajaran Informatika</div>
+                        <div class="text-xs font-bold leading-tight flex items-center gap-1.5">
+                            EduAssist AI
+                            <span id="aiBadgeStatus" class="px-1.5 py-0.2 text-[9px] bg-amber-400 text-slate-900 font-extrabold rounded-full">Pro Engine</span>
+                        </div>
+                        <div class="text-[10px] text-blue-100">Asisten Pintar Informatika Pak Agus</div>
                     </div>
                 </div>
-                <button onclick="window.toggleAIChat()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex items-center space-x-2">
+                    <button onclick="window.toggleAIApiKeyModal()" class="text-white/80 hover:text-white text-xs" title="Atur API Key Gemini AI">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <button onclick="window.toggleAIChat()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- Modal Key API Gemini (Tersembunyi) -->
+            <div id="aiKeySettings" class="hidden p-3 bg-slate-100 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600 text-xs space-y-2">
+                <div class="font-bold text-slate-700 dark:text-slate-200 flex justify-between items-center">
+                    <span>⚙️ Pengaturan Gemini API Key</span>
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-[10px] text-blue-600 dark:text-blue-400 underline">Dapatkan Key Gratis</a>
+                </div>
+                <input type="password" id="geminiApiKeyInput" placeholder="Tempel Gemini API Key di sini..." class="w-full bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-xs outline-none">
+                <button onclick="window.saveGeminiApiKey()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-1 rounded-lg font-bold text-[11px]">Simpan Key AI</button>
             </div>
 
             <div id="aiMessages" class="flex-1 p-3 overflow-y-auto space-y-3 text-xs">
                 <div class="bg-blue-50 dark:bg-slate-700/60 p-3 rounded-2xl text-slate-700 dark:text-slate-200 leading-relaxed">
-                    Halo! Saya <b>EduAssist AI</b>. Tanya saya tentang konsep Informatika, bantuan tugas, atau latihan soal!
+                    Halo! Saya <b>EduAssist AI</b> 🤖. Saya telah membaca seluruh modul bahan ajar Informatika Pak Agus Susanto, S.Kom di kelas ini. Tanyakan apa saja tentang materi, soal, atau pemrograman!
                 </div>
             </div>
 
             <div class="p-2 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 flex gap-1.5 overflow-x-auto">
-                <button onclick="window.sendQuickPrompt('Jelaskan operator logika')" class="whitespace-nowrap px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                <button onclick="window.sendQuickPrompt('Jelaskan materi berpikir komputasional')" class="whitespace-nowrap px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-[10px] font-medium text-slate-600 dark:text-slate-300">
                     💡 Berpikir Komputasional
                 </button>
-                <button onclick="window.sendQuickPrompt('Apa itu jaringan komputer?')" class="whitespace-nowrap px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-[10px] font-medium text-slate-600 dark:text-slate-300">
-                    🌐 Jaringan Komputer
+                <button onclick="window.sendQuickPrompt('Bantu buatkan contoh program Python')" class="whitespace-nowrap px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                    🐍 Contoh Python
+                </button>
+                <button onclick="window.sendQuickPrompt('Apa saja materi kelas ini?')" class="whitespace-nowrap px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                    📚 Ringkasan Modul
                 </button>
             </div>
 
             <form onsubmit="window.sendAIChat(event)" class="p-2 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex gap-2">
-                <input type="text" id="aiInput" placeholder="Tanyakan konsep..." class="flex-1 bg-slate-100 dark:bg-slate-700 rounded-xl px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-blue-500">
-                <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors">
+                <input type="text" id="aiInput" placeholder="Tanyakan konsep atau soal..." class="flex-1 bg-slate-100 dark:bg-slate-700 rounded-xl px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-blue-500">
+                <button type="submit" id="aiSendBtn" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors flex items-center justify-center">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </form>
@@ -733,27 +754,6 @@
         let auth = null;
         let isCloudConnected = false;
 
-        // Firebase Configuration Setup
-        try {
-            if (typeof __firebase_config !== 'undefined') {
-                const firebaseConfig = JSON.parse(__firebase_config);
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // Authenticate before querying
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                isCloudConnected = true;
-                console.log("Firebase Cloud Realtime DB Connected");
-            }
-        } catch (e) {
-            console.warn("Cloud connection using local fallback:", e);
-        }
-
         const DEFAULT_CLASSES = [
             { id: 'INF-XE', name: 'INFORMATIKA X.E', code: 'INF-XE' },
             { id: 'INF-XT', name: 'INFORMATIKA X.T', code: 'INF-XT' },
@@ -784,35 +784,48 @@
             students: []
         };
 
-        // Initialize Firestore Realtime Subscriptions
-        function setupCloudListeners() {
-            if (!isCloudConnected || !db) {
-                loadLocalState();
-                return;
-            }
+        // Attach all modal control handlers synchronously to window
+        window.openAdminModal = () => document.getElementById('adminModal')?.classList.remove('hidden');
+        window.closeAdminModal = () => document.getElementById('adminModal')?.classList.add('hidden');
+        window.openJoinModal = () => document.getElementById('joinModal')?.classList.remove('hidden');
+        window.closeJoinModal = () => document.getElementById('joinModal')?.classList.add('hidden');
+        window.openCreateClassModal = () => document.getElementById('createClassModal')?.classList.remove('hidden');
+        window.closeCreateClassModal = () => document.getElementById('createClassModal')?.classList.add('hidden');
+        window.openMaterialModal = () => document.getElementById('materialModal')?.classList.remove('hidden');
+        window.closeMaterialModal = () => document.getElementById('materialModal')?.classList.add('hidden');
+        window.openQuizModal = () => document.getElementById('quizModal')?.classList.remove('hidden');
+        window.closeQuizModal = () => document.getElementById('quizModal')?.classList.add('hidden');
+        window.openAssignmentModal = () => document.getElementById('assignmentModal')?.classList.remove('hidden');
+        window.closeAssignmentModal = () => document.getElementById('assignmentModal')?.classList.add('hidden');
+        window.openScheduleModal = () => document.getElementById('scheduleModal')?.classList.remove('hidden');
+        window.closeScheduleModal = () => document.getElementById('scheduleModal')?.classList.add('hidden');
+        window.openAnnouncementModal = () => document.getElementById('announcementModal')?.classList.remove('hidden');
+        window.closeAnnouncementModal = () => document.getElementById('announcementModal')?.classList.add('hidden');
 
-            const collections = ['classes', 'students', 'materials', 'quizzes', 'assignments', 'announcements', 'schedules', 'grades'];
+        // Firebase Configuration Setup
+        async function initFirebase() {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
 
-            collections.forEach(collName => {
-                const path = collection(db, 'artifacts', appId, 'public', 'data', collName);
-                onSnapshot(path, (snapshot) => {
-                    const items = [];
-                    snapshot.forEach(doc => {
-                        items.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    if (collName === 'classes') {
-                        APP_STATE.classes = items.length > 0 ? items : DEFAULT_CLASSES;
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
-                        APP_STATE[collName] = items;
+                        await signInAnonymously(auth);
                     }
-                    
-                    saveLocalState();
-                    window.renderAppHeaderAndRole();
-                }, (error) => {
-                    console.error(`Error syncing ${collName}:`, error);
-                });
-            });
+                    isCloudConnected = true;
+                    console.log("Firebase Cloud Realtime DB Connected");
+                    setupCloudListeners();
+                } else {
+                    loadLocalState();
+                }
+            } catch (e) {
+                console.warn("Cloud connection using local fallback:", e);
+                loadLocalState();
+            }
         }
 
         function loadLocalState() {
@@ -866,6 +879,81 @@
             }
         }
 
+        function setupCloudListeners() {
+            if (!isCloudConnected || !db) {
+                loadLocalState();
+                return;
+            }
+
+            const collections = ['classes', 'students', 'materials', 'quizzes', 'assignments', 'announcements', 'schedules', 'grades'];
+
+            collections.forEach(collName => {
+                const path = collection(db, 'artifacts', appId, 'public', 'data', collName);
+                onSnapshot(path, (snapshot) => {
+                    const items = [];
+                    snapshot.forEach(doc => {
+                        items.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    if (collName === 'classes') {
+                        APP_STATE.classes = items.length > 0 ? items : DEFAULT_CLASSES;
+                    } else {
+                        APP_STATE[collName] = items;
+                    }
+                    
+                    saveLocalState();
+                    window.renderAppHeaderAndRole();
+                }, (error) => {
+                    console.error(`Error syncing ${collName}:`, error);
+                });
+            });
+        }
+
+        window.renderAppHeaderAndRole = function() {
+            const user = APP_STATE.currentUser;
+            const isGuru = user.role === 'guru';
+
+            const avatarEl = document.getElementById('userAvatar');
+            const nameEl = document.getElementById('userNameDisplay');
+            const roleEl = document.getElementById('userRoleDisplay');
+            const adminBtn = document.getElementById('adminLoginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (avatarEl) {
+                avatarEl.innerText = isGuru ? 'AS' : (user.name ? user.name.substring(0, 2).toUpperCase() : 'SP');
+            }
+            if (nameEl) {
+                nameEl.innerText = isGuru ? 'Agus Susanto, S.Kom' : (user.name || 'Siswa Pengunjung');
+            }
+            if (roleEl) {
+                roleEl.innerText = isGuru ? 'Admin / Pengajar' : 'Akses Siswa';
+            }
+
+            if (adminBtn) adminBtn.classList.toggle('hidden', isGuru);
+            if (logoutBtn) logoutBtn.classList.toggle('hidden', !isGuru);
+
+            const teacherEls = [
+                'createClassBtn',
+                'teacherAnnouncementBox',
+                'addMaterialBtn',
+                'addQuizBtn',
+                'addAssignmentBtn',
+                'addScheduleBtn',
+                'clearDataBtn'
+            ];
+
+            teacherEls.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.toggle('hidden', !isGuru);
+                }
+            });
+
+            window.renderClassDropdown();
+            window.renderCurrentClassBanner();
+            window.renderActiveView();
+        };
+
         window.showToast = function(message, type = 'info') {
             let toast = document.getElementById('customToast');
             if (!toast) {
@@ -882,14 +970,46 @@
             }, 3500);
         };
 
+        window.handleAdminLogin = function(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+
+            if ((u === 'admin' || u === 'agus.susanto') && p === 'admin123') {
+                APP_STATE.currentUser = { 
+                    name: 'Agus Susanto, S.Kom', 
+                    role: 'guru', 
+                    joinedClasses: APP_STATE.classes.map(c => c.id) 
+                };
+                saveLocalState();
+                window.closeAdminModal();
+                window.renderAppHeaderAndRole();
+                window.showToast('Berhasil masuk sebagai Admin Guru!', 'success');
+            } else {
+                window.showToast('Username atau password Admin salah!', 'error');
+            }
+        };
+
+        window.handleLogout = function() {
+            APP_STATE.currentUser = { name: '', role: 'siswa', joinedClasses: ['INF-XE'] };
+            saveLocalState();
+            window.renderAppHeaderAndRole();
+            window.showToast('Telah keluar dari akun.', 'info');
+        };
+
         window.handleStudentJoin = async function(e) {
             e.preventDefault();
-            const name = document.getElementById('joinStudentName').value.trim();
-            const code = document.getElementById('joinClassCode').value.trim().toUpperCase();
+            const nameInput = document.getElementById('joinStudentName');
+            const codeInput = document.getElementById('joinClassCode');
+            
+            if (!nameInput || !codeInput) return;
+
+            const name = nameInput.value.trim();
+            const code = codeInput.value.trim().toUpperCase();
 
             const targetClass = APP_STATE.classes.find(c => c.code === code);
             if (!targetClass) {
-                window.showToast('Kode kelas tidak ditemukan!', 'error');
+                window.showToast('Kode kelas tidak ditemukan! Periksa kembali kode kelas Anda.', 'error');
                 return;
             }
 
@@ -914,10 +1034,14 @@
                 await saveCloudDoc('students', studentId, newStudent);
             }
 
+            saveLocalState();
             window.closeJoinModal();
             window.renderAppHeaderAndRole();
-            window.showToast(`Selamat datang ${name} di kelas ${targetClass.name}! (Tersimpan di Cloud)`, 'success');
+            window.showToast(`Selamat datang ${name} di kelas ${targetClass.name}!`, 'success');
         };
+
+        window.openCreateClassModal = () => document.getElementById('createClassModal').classList.remove('hidden');
+        window.closeCreateClassModal = () => document.getElementById('createClassModal').classList.add('hidden');
 
         window.handleCreateClass = async function(e) {
             e.preventDefault();
@@ -935,6 +1059,9 @@
             window.showToast(`Kelas ${name} berhasil dibuat & tersimpan online!`, 'success');
         };
 
+        window.openMaterialModal = () => document.getElementById('materialModal').classList.remove('hidden');
+        window.closeMaterialModal = () => document.getElementById('materialModal').classList.add('hidden');
+
         window.handleCreateMaterial = async function(e) {
             e.preventDefault();
             const id = 'mat_' + Date.now();
@@ -951,6 +1078,32 @@
             window.closeMaterialModal();
             window.renderActiveView();
             window.showToast('Bahan ajar materi dipublikasikan ke Cloud!', 'success');
+        };
+
+        window.openQuizModal = () => document.getElementById('quizModal').classList.remove('hidden');
+        window.closeQuizModal = () => document.getElementById('quizModal').classList.add('hidden');
+
+        window.handleAddQuizQuestion = function() {
+            const container = document.getElementById('quizQuestionsContainer');
+            const qCount = container.children.length + 1;
+            const qDiv = document.createElement('div');
+            qDiv.className = "p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 space-y-2";
+            qDiv.innerHTML = `
+                <input type="text" placeholder="Pertanyaan Soal ${qCount}..." class="quiz-q-text w-full bg-white dark:bg-slate-800 px-2 py-1.5 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600" required>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" placeholder="Opsi A" class="quiz-q-optA w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600" required>
+                    <input type="text" placeholder="Opsi B" class="quiz-q-optB w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600" required>
+                    <input type="text" placeholder="Opsi C" class="quiz-q-optC w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600">
+                    <input type="text" placeholder="Opsi D" class="quiz-q-optD w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600">
+                </div>
+                <select class="quiz-q-key w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600 font-semibold text-emerald-600">
+                    <option value="0">Kunci Jawaban: Opsi A</option>
+                    <option value="1">Kunci Jawaban: Opsi B</option>
+                    <option value="2">Kunci Jawaban: Opsi C</option>
+                    <option value="3">Kunci Jawaban: Opsi D</option>
+                </select>
+            `;
+            container.appendChild(qDiv);
         };
 
         window.handleCreateQuiz = async function(e) {
@@ -989,6 +1142,9 @@
             window.showToast('Kuis interaktif rilis secara online!', 'success');
         };
 
+        window.openAssignmentModal = () => document.getElementById('assignmentModal').classList.remove('hidden');
+        window.closeAssignmentModal = () => document.getElementById('assignmentModal').classList.add('hidden');
+
         window.handleCreateAssignment = async function(e) {
             e.preventDefault();
             const id = 'asg_' + Date.now();
@@ -1006,6 +1162,9 @@
             window.showToast('Tugas diterbitkan secara online!', 'success');
         };
 
+        window.openScheduleModal = () => document.getElementById('scheduleModal').classList.remove('hidden');
+        window.closeScheduleModal = () => document.getElementById('scheduleModal').classList.add('hidden');
+
         window.handleCreateSchedule = async function(e) {
             e.preventDefault();
             const id = 'sch_' + Date.now();
@@ -1022,6 +1181,9 @@
             window.renderActiveView();
             window.showToast('Jadwal tersimpan di Cloud!', 'success');
         };
+
+        window.openAnnouncementModal = () => document.getElementById('announcementModal').classList.remove('hidden');
+        window.closeAnnouncementModal = () => document.getElementById('announcementModal').classList.add('hidden');
 
         window.handleCreateAnnouncement = async function(e) {
             e.preventDefault();
@@ -1063,576 +1225,6 @@
             window.showToast('Seluruh data nama siswa & nilai dikosongkan.', 'info');
         };
 
-        window.finishQuiz = async function() {
-            if (typeof activeQuizState === 'undefined' || !activeQuizState) return;
-            clearInterval(activeQuizState.interval);
-            const score = activeQuizState.score;
-            const studentName = APP_STATE.currentUser.name || 'Siswa Pengunjung';
-            
-            const gradeId = 'grd_' + Date.now();
-            const gradeObj = {
-                id: gradeId,
-                classId: APP_STATE.currentClassId,
-                studentName: studentName,
-                quizTitle: activeQuizState.quiz.title,
-                score: score,
-                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-            };
-
-            APP_STATE.grades.push(gradeObj);
-            await saveCloudDoc('grades', gradeId, gradeObj);
-            
-            window.closeQuizPlayer();
-            
-            if (typeof confetti === 'function') {
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            }
-            
-            window.showToast(`Selamat ${studentName}! Kuis Selesai. Skor Anda: ${score}/100 (Tersimpan Online)`, 'success');
-            window.renderActiveView();
-        };
-
-        window.renderClassDropdown = function() {
-            const select = document.getElementById('classSelect');
-            if (!select) return;
-
-            const isGuru = APP_STATE.currentUser.role === 'guru';
-            const availableClasses = isGuru 
-                ? APP_STATE.classes 
-                : APP_STATE.classes.filter(c => APP_STATE.currentUser.joinedClasses.includes(c.id));
-
-            select.innerHTML = availableClasses.map(c => `
-                <option value="${c.id}" ${c.id === APP_STATE.currentClassId ? 'selected' : ''}>
-                    ${c.name} (${c.code})
-                </option>
-            `).join('');
-        };
-
-        window.renderCurrentClassBanner = function() {
-            const currClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId) || APP_STATE.classes[0];
-            if (!currClass) return;
-
-            document.getElementById('bannerClassName').innerText = currClass.name;
-            document.getElementById('bannerClassCode').innerText = currClass.code;
-        };
-
-        window.changeActiveClass = function(classId) {
-            APP_STATE.currentClassId = classId;
-            saveState();
-            window.renderCurrentClassBanner();
-            window.renderActiveView();
-        };
-
-        window.switchTab = function(tabName) {
-            APP_STATE.activeTab = tabName;
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
-                btn.classList.add('text-slate-600', 'dark:text-slate-400');
-            });
-
-            const activeBtn = document.getElementById(`tab-${tabName}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
-                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-            }
-
-            document.querySelectorAll('.tab-content').forEach(view => view.classList.add('hidden'));
-            const activeView = document.getElementById(`view-${tabName}`);
-            if (activeView) activeView.classList.remove('hidden');
-
-            window.renderActiveView();
-        };
-
-        window.handleSearch = function(query) {
-            APP_STATE.searchQuery = query.toLowerCase().trim();
-            window.renderActiveView();
-        };
-
-        window.renderActiveView = function() {
-            const currentClassId = APP_STATE.currentClassId;
-            const q = APP_STATE.searchQuery;
-
-            const classMat = APP_STATE.materials.filter(m => m.classId === currentClassId);
-            const classQuiz = APP_STATE.quizzes.filter(qz => qz.classId === currentClassId);
-            const classStudents = (APP_STATE.students || []).filter(s => s.classId === currentClassId);
-
-            if (document.getElementById('statTotalMaterials')) document.getElementById('statTotalMaterials').innerText = classMat.length;
-            if (document.getElementById('statTotalQuizzes')) document.getElementById('statTotalQuizzes').innerText = classQuiz.length;
-            if (document.getElementById('statTotalStudents')) document.getElementById('statTotalStudents').innerText = classStudents.length;
-
-            if (APP_STATE.activeTab === 'stream') {
-                const container = document.getElementById('announcementContainer');
-                const annList = APP_STATE.announcements.filter(a => a.classId === currentClassId && a.content.toLowerCase().includes(q));
-                
-                if (annList.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <i class="fa-solid fa-bullhorn text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-xs text-slate-500 font-medium">Belum ada pengumuman di kelas ini.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = annList.map(a => `
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-xs">AS</div>
-                                    <div>
-                                        <div class="text-xs font-bold">${a.author || 'Agus Susanto, S.Kom'}</div>
-                                        <div class="text-[10px] text-slate-400">${a.date}</div>
-                                    </div>
-                                </div>
-                                ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteAnnouncement('${a.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
-                            </div>
-                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">${a.content}</p>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            if (APP_STATE.activeTab === 'materials') {
-                const container = document.getElementById('materialsContainer');
-                const matList = classMat.filter(m => m.title.toLowerCase().includes(q) || m.content.toLowerCase().includes(q));
-
-                if (matList.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <i class="fa-solid fa-book-open text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-xs text-slate-500 font-medium">Belum ada bahan ajar materi yang diunggah.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = matList.map(m => `
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 rounded-md">${m.category}</span>
-                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteMaterial('${m.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
-                                </div>
-                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">${m.title}</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-4">${m.content}</p>
-                            </div>
-                            <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
-                                <button onclick="window.downloadSummaryTxt('${m.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold py-2 rounded-xl transition-all flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-download"></i> Unduh Modul (.txt)
-                                </button>
-                                ${m.link ? `<a href="${m.link}" target="_blank" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            if (APP_STATE.activeTab === 'quizzes') {
-                const container = document.getElementById('quizzesContainer');
-                const qzList = classQuiz.filter(qz => qz.title.toLowerCase().includes(q));
-
-                if (qzList.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <i class="fa-solid fa-gamepad text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-xs text-slate-500 font-medium">Belum ada kuis interaktif yang rilis.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = qzList.map(qz => `
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-md">EduQuiz Live</span>
-                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteQuiz('${qz.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
-                                </div>
-                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">${qz.title}</h3>
-                                <p class="text-xs text-slate-400 mb-4">${qz.questions ? qz.questions.length : 0} Soal Pilihan Ganda</p>
-                            </div>
-                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
-                                ${qz.externalLink 
-                                    ? `<a href="${qz.externalLink}" target="_blank" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"><i class="fa-solid fa-play"></i> Mainkan Kuis Luar</a>`
-                                    : `<button onclick="window.startQuiz('${qz.id}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"><i class="fa-solid fa-gamepad"></i> Mulai Kuis Gamifikasi</button>`
-                                }
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            if (APP_STATE.activeTab === 'assignments') {
-                const container = document.getElementById('assignmentsContainer');
-                const asgList = APP_STATE.assignments.filter(a => a.classId === currentClassId && a.title.toLowerCase().includes(q));
-
-                if (asgList.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <i class="fa-solid fa-list-check text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-xs text-slate-500 font-medium">Belum ada penugasan di kelas ini.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = asgList.map(a => `
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">${a.title}</h3>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">Tenggat: ${a.dueDate}</span>
-                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteAssignment('${a.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
-                                </div>
-                            </div>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${a.instructions}</p>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            if (APP_STATE.activeTab === 'schedule') {
-                const container = document.getElementById('scheduleContainer');
-                const schList = APP_STATE.schedules.filter(s => s.classId === currentClassId);
-
-                if (schList.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <i class="fa-solid fa-calendar-days text-3xl text-slate-300 mb-2"></i>
-                            <p class="text-xs text-slate-500 font-medium">Belum ada jadwal pelajaran tersimpan.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = schList.map(s => `
-                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
-                            <div>
-                                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">${s.day}</span>
-                                <div class="text-xs font-bold text-slate-800 dark:text-slate-100">${s.time}</div>
-                                <div class="text-[10px] text-slate-400">${s.room || 'Lab Komputer'}</div>
-                            </div>
-                            ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteSchedule('${s.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
-                        </div>
-                    `).join('');
-                }
-            }
-
-            if (APP_STATE.activeTab === 'grades') {
-                const studentsTbody = document.getElementById('studentsTableBody');
-                const enrolledBadge = document.getElementById('enrolledStudentsBadge');
-                
-                if (enrolledBadge) enrolledBadge.innerText = `${classStudents.length} Siswa Terdaftar`;
-
-                if (studentsTbody) {
-                    if (classStudents.length === 0) {
-                        studentsTbody.innerHTML = `
-                            <tr>
-                                <td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada siswa yang bergabung di kelas ini. Siswa dapat bergabung dengan kode kelas <b>${(APP_STATE.classes.find(c=>c.id===currentClassId)||{}).code||''}</b>.</td>
-                            </tr>
-                        `;
-                    } else {
-                        studentsTbody.innerHTML = classStudents.map((s, idx) => `
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                <td class="p-3 font-semibold text-slate-500">${idx + 1}</td>
-                                <td class="p-3 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-[10px]">
-                                        ${s.name.substring(0, 2).toUpperCase()}
-                                    </div>
-                                    <span>${s.name}</span>
-                                </td>
-                                <td class="p-3 text-slate-500">${s.joinedAt || '-'}</td>
-                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Aktif</span></td>
-                                <td class="p-3 text-right">
-                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteStudent('${s.id}')" class="text-xs text-red-500 hover:text-red-700 font-semibold"><i class="fa-solid fa-user-minus"></i> Hapus</button>` : '<span class="text-slate-400 text-[10px]">-</span>'}
-                                </td>
-                            </tr>
-                        `).join('');
-                    }
-                }
-
-                const tbody = document.getElementById('gradesTableBody');
-                const classGrades = APP_STATE.grades.filter(g => g.classId === currentClassId);
-
-                if (classGrades.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada data pengerjaan kuis siswa.</td>
-                        </tr>
-                    `;
-                } else {
-                    tbody.innerHTML = classGrades.map(g => `
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                            <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${g.studentName}</td>
-                            <td class="p-3 text-slate-500">${g.quizTitle}</td>
-                            <td class="p-3 font-bold text-emerald-600">${g.score} / 100</td>
-                            <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Selesai</span></td>
-                            <td class="p-3 text-slate-400 text-[10px]">${g.date}</td>
-                        </tr>
-                    `).join('');
-                }
-            }
-        };
-
-        window.openAdminModal = () => document.getElementById('adminModal').classList.remove('hidden');
-        window.closeAdminModal = () => document.getElementById('adminModal').classList.add('hidden');
-        
-        window.handleAdminLogin = function(e) {
-            e.preventDefault();
-            const u = document.getElementById('adminUser').value.trim();
-            const p = document.getElementById('adminPass').value.trim();
-
-            if ((u === 'admin' || u === 'agus.susanto') && p === 'admin123') {
-                APP_STATE.currentUser = { name: 'Agus Susanto, S.Kom', role: 'guru', joinedClasses: APP_STATE.classes.map(c => c.id) };
-                saveState();
-                window.closeAdminModal();
-                window.renderAppHeaderAndRole();
-                window.showToast('Berhasil masuk sebagai Admin Guru!', 'success');
-            } else {
-                window.showToast('Username atau password Admin salah!', 'error');
-            }
-        };
-
-        window.handleLogout = function() {
-            APP_STATE.currentUser = { name: '', role: 'siswa', joinedClasses: ['INF-XE'] };
-            saveState();
-            window.renderAppHeaderAndRole();
-            window.showToast('Telah keluar dari akun.', 'info');
-        };
-
-        window.openJoinModal = () => document.getElementById('joinModal').classList.remove('hidden');
-        window.closeJoinModal = () => document.getElementById('joinModal').classList.add('hidden');
-
-        window.handleStudentJoin = function(e) {
-            e.preventDefault();
-            const name = document.getElementById('joinStudentName').value.trim();
-            const code = document.getElementById('joinClassCode').value.trim().toUpperCase();
-
-            const targetClass = APP_STATE.classes.find(c => c.code === code);
-            if (!targetClass) {
-                window.showToast('Kode kelas tidak ditemukan!', 'error');
-                return;
-            }
-
-            if (!APP_STATE.currentUser.joinedClasses.includes(targetClass.id)) {
-                APP_STATE.currentUser.joinedClasses.push(targetClass.id);
-            }
-            APP_STATE.currentUser.name = name;
-            APP_STATE.currentClassId = targetClass.id;
-
-            if (!APP_STATE.students) APP_STATE.students = [];
-            const existingStudent = APP_STATE.students.find(s => s.name.toLowerCase() === name.toLowerCase() && s.classId === targetClass.id);
-            if (!existingStudent) {
-                APP_STATE.students.push({
-                    id: 'std_' + Date.now(),
-                    name: name,
-                    classId: targetClass.id,
-                    joinedAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-                });
-            }
-
-            saveState();
-            window.closeJoinModal();
-            window.renderAppHeaderAndRole();
-            window.showToast(`Selamat datang ${name} di kelas ${targetClass.name}!`, 'success');
-        };
-
-        window.openCreateClassModal = () => document.getElementById('createClassModal').classList.remove('hidden');
-        window.closeCreateClassModal = () => document.getElementById('createClassModal').classList.add('hidden');
-
-        window.handleCreateClass = function(e) {
-            e.preventDefault();
-            const name = document.getElementById('newClassName').value.trim();
-            const code = document.getElementById('newClassCode').value.trim().toUpperCase();
-
-            const id = 'INF-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-            APP_STATE.classes.push({ id, name, code });
-            APP_STATE.currentClassId = id;
-            saveState();
-            window.closeCreateClassModal();
-            window.renderAppHeaderAndRole();
-            window.showToast(`Kelas ${name} berhasil dibuat!`, 'success');
-        };
-
-        window.openMaterialModal = () => document.getElementById('materialModal').classList.remove('hidden');
-        window.closeMaterialModal = () => document.getElementById('materialModal').classList.add('hidden');
-
-        window.handleCreateMaterial = function(e) {
-            e.preventDefault();
-            const m = {
-                id: 'mat_' + Date.now(),
-                classId: APP_STATE.currentClassId,
-                title: document.getElementById('matTitle').value,
-                category: document.getElementById('matCategory').value,
-                content: document.getElementById('matContent').value,
-                link: document.getElementById('matLink').value
-            };
-            APP_STATE.materials.push(m);
-            saveState();
-            window.closeMaterialModal();
-            window.renderActiveView();
-            window.showToast('Bahan ajar materi berhasil dipublikasikan!', 'success');
-        };
-
-        window.openQuizModal = () => document.getElementById('quizModal').classList.remove('hidden');
-        window.closeQuizModal = () => document.getElementById('quizModal').classList.add('hidden');
-
-        window.handleAddQuizQuestion = function() {
-            const container = document.getElementById('quizQuestionsContainer');
-            const qCount = container.children.length + 1;
-            const qDiv = document.createElement('div');
-            qDiv.className = "p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 space-y-2";
-            qDiv.innerHTML = `
-                <input type="text" placeholder="Pertanyaan Soal ${qCount}..." class="quiz-q-text w-full bg-white dark:bg-slate-800 px-2 py-1.5 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600" required>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" placeholder="Opsi A" class="quiz-q-optA w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600" required>
-                    <input type="text" placeholder="Opsi B" class="quiz-q-optB w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600" required>
-                    <input type="text" placeholder="Opsi C" class="quiz-q-optC w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600">
-                    <input type="text" placeholder="Opsi D" class="quiz-q-optD w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600">
-                </div>
-                <select class="quiz-q-key w-full bg-white dark:bg-slate-800 px-2 py-1 rounded-lg text-xs outline-none border border-slate-200 dark:border-slate-600 font-semibold text-emerald-600">
-                    <option value="0">Kunci Jawaban: Opsi A</option>
-                    <option value="1">Kunci Jawaban: Opsi B</option>
-                    <option value="2">Kunci Jawaban: Opsi C</option>
-                    <option value="3">Kunci Jawaban: Opsi D</option>
-                </select>
-            `;
-            container.appendChild(qDiv);
-        };
-
-        window.handleCreateQuiz = function(e) {
-            e.preventDefault();
-            const qDivs = document.querySelectorAll('#quizQuestionsContainer > div');
-            const questions = [];
-
-            qDivs.forEach(div => {
-                const text = div.querySelector('.quiz-q-text').value;
-                const optA = div.querySelector('.quiz-q-optA').value;
-                const optB = div.querySelector('.quiz-q-optB').value;
-                const optC = div.querySelector('.quiz-q-optC').value;
-                const optD = div.querySelector('.quiz-q-optD').value;
-                const key = parseInt(div.querySelector('.quiz-q-key').value);
-
-                const opts = [optA, optB];
-                if (optC) opts.push(optC);
-                if (optD) opts.push(optD);
-
-                questions.push({ question: text, options: opts, answerKey: key });
-            });
-
-            const qz = {
-                id: 'qz_' + Date.now(),
-                classId: APP_STATE.currentClassId,
-                title: document.getElementById('quizTitle').value,
-                externalLink: document.getElementById('quizExternalLink').value,
-                questions: questions
-            };
-
-            APP_STATE.quizzes.push(qz);
-            saveState();
-            window.closeQuizModal();
-            window.renderActiveView();
-            window.showToast('Kuis interaktif berhasil dirilis!', 'success');
-        };
-
-        window.openAssignmentModal = () => document.getElementById('assignmentModal').classList.remove('hidden');
-        window.closeAssignmentModal = () => document.getElementById('assignmentModal').classList.add('hidden');
-
-        window.handleCreateAssignment = function(e) {
-            e.preventDefault();
-            const a = {
-                id: 'asg_' + Date.now(),
-                classId: APP_STATE.currentClassId,
-                title: document.getElementById('assignTitle').value,
-                dueDate: document.getElementById('assignDueDate').value,
-                instructions: document.getElementById('assignInstructions').value
-            };
-            APP_STATE.assignments.push(a);
-            saveState();
-            window.closeAssignmentModal();
-            window.renderActiveView();
-            window.showToast('Tugas baru diterbitkan!', 'success');
-        };
-
-        window.openScheduleModal = () => document.getElementById('scheduleModal').classList.remove('hidden');
-        window.closeScheduleModal = () => document.getElementById('scheduleModal').classList.add('hidden');
-
-        window.handleCreateSchedule = function(e) {
-            e.preventDefault();
-            const sch = {
-                id: 'sch_' + Date.now(),
-                classId: APP_STATE.currentClassId,
-                day: document.getElementById('schDay').value,
-                time: document.getElementById('schTime').value,
-                room: document.getElementById('schRoom').value
-            };
-            APP_STATE.schedules.push(sch);
-            saveState();
-            window.closeScheduleModal();
-            window.renderActiveView();
-            window.showToast('Jadwal pelajaran tersimpan!', 'success');
-        };
-
-        window.openAnnouncementModal = () => document.getElementById('announcementModal').classList.remove('hidden');
-        window.closeAnnouncementModal = () => document.getElementById('announcementModal').classList.add('hidden');
-
-        window.handleCreateAnnouncement = function(e) {
-            e.preventDefault();
-            const ann = {
-                id: 'ann_' + Date.now(),
-                classId: APP_STATE.currentClassId,
-                author: 'Agus Susanto, S.Kom',
-                content: document.getElementById('annContent').value,
-                date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-            };
-            APP_STATE.announcements.push(ann);
-            saveState();
-            window.closeAnnouncementModal();
-            window.renderActiveView();
-            window.showToast('Pengumuman dikirim!', 'success');
-        };
-
-        window.deleteAnnouncement = id => { APP_STATE.announcements = APP_STATE.announcements.filter(a => a.id !== id); saveState(); window.renderActiveView(); };
-        window.deleteMaterial = id => { APP_STATE.materials = APP_STATE.materials.filter(m => m.id !== id); saveState(); window.renderActiveView(); };
-        window.deleteQuiz = id => { APP_STATE.quizzes = APP_STATE.quizzes.filter(q => q.id !== id); saveState(); window.renderActiveView(); };
-        window.deleteAssignment = id => { APP_STATE.assignments = APP_STATE.assignments.filter(a => a.id !== id); saveState(); window.renderActiveView(); };
-        window.deleteSchedule = id => { APP_STATE.schedules = APP_STATE.schedules.filter(s => s.id !== id); saveState(); window.renderActiveView(); };
-        
-        window.deleteStudent = function(studentId) {
-            APP_STATE.students = (APP_STATE.students || []).filter(s => s.id !== studentId);
-            saveState();
-            window.renderActiveView();
-            window.showToast('Siswa dihapus dari daftar kelas.', 'info');
-        };
-
-        window.clearStudentData = function() {
-            APP_STATE.students = [];
-            APP_STATE.grades = [];
-            saveState();
-            window.renderActiveView();
-            window.showToast('Seluruh data nama siswa dan rekap nilai berhasil dikosongkan.', 'info');
-        };
-
-        window.downloadSummaryTxt = function(matId) {
-            const m = APP_STATE.materials.find(x => x.id === matId);
-            if (!m) return;
-            const text = `MODUL PEMBELAJARAN INFORMATIKA\nJudul: ${m.title}\nKategori: ${m.category}\nPengajar: Agus Susanto, S.Kom\n-----------------------------------\n\n${m.content}\n\nTautan Lampiran: ${m.link || 'Tidak ada'}`;
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `${m.title.replace(/\s+/g, '_')}_Modul.txt`;
-            a.click();
-        };
-
-        window.exportGradesCSV = function() {
-            const currentClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId);
-            const classGrades = APP_STATE.grades.filter(g => g.classId === APP_STATE.currentClassId);
-            if (classGrades.length === 0) {
-                window.showToast('Belum ada data nilai kuis untuk diekspor.', 'error');
-                return;
-            }
-            let csv = 'Nama Siswa,Judul Kuis,Skor,Tanggal\n';
-            classGrades.forEach(g => {
-                csv += `"${g.studentName}","${g.quizTitle}",${g.score},"${g.date}"\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `Rekap_Nilai_${currentClass ? currentClass.code : 'Kelas'}.csv`;
-            a.click();
-        };
-
-        /* QUIZ PLAYER LOGIC */
         let activeQuizState = null;
 
         window.startQuiz = function(quizId) {
@@ -1709,21 +1301,25 @@
             }
         };
 
-        window.finishQuiz = function() {
+        window.finishQuiz = async function() {
+            if (typeof activeQuizState === 'undefined' || !activeQuizState) return;
             clearInterval(activeQuizState.interval);
             const score = activeQuizState.score;
             const studentName = APP_STATE.currentUser.name || 'Siswa Pengunjung';
             
-            APP_STATE.grades.push({
-                id: 'grd_' + Date.now(),
+            const gradeId = 'grd_' + Date.now();
+            const gradeObj = {
+                id: gradeId,
                 classId: APP_STATE.currentClassId,
                 studentName: studentName,
                 quizTitle: activeQuizState.quiz.title,
                 score: score,
                 date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-            });
+            };
+
+            APP_STATE.grades.push(gradeObj);
+            await saveCloudDoc('grades', gradeId, gradeObj);
             
-            saveState();
             window.closeQuizPlayer();
             
             if (typeof confetti === 'function') {
@@ -1738,6 +1334,316 @@
             if (activeQuizState && activeQuizState.interval) clearInterval(activeQuizState.interval);
             activeQuizState = null;
             document.getElementById('quizPlayerOverlay').classList.add('hidden');
+        };
+
+        window.renderClassDropdown = function() {
+            const select = document.getElementById('classSelect');
+            if (!select) return;
+
+            const isGuru = APP_STATE.currentUser.role === 'guru';
+            const availableClasses = isGuru 
+                ? APP_STATE.classes 
+                : APP_STATE.classes.filter(c => APP_STATE.currentUser.joinedClasses.includes(c.id));
+
+            select.innerHTML = availableClasses.map(c => `
+                <option value="${c.id}" ${c.id === APP_STATE.currentClassId ? 'selected' : ''}>
+                    ${c.name} (${c.code})
+                </option>
+            `).join('');
+        };
+
+        window.renderCurrentClassBanner = function() {
+            const currClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId) || APP_STATE.classes[0];
+            if (!currClass) return;
+
+            const bannerName = document.getElementById('bannerClassName');
+            const bannerCode = document.getElementById('bannerClassCode');
+            if (bannerName) bannerName.innerText = currClass.name;
+            if (bannerCode) bannerCode.innerText = currClass.code;
+        };
+
+        window.changeActiveClass = function(classId) {
+            APP_STATE.currentClassId = classId;
+            saveLocalState();
+            window.renderCurrentClassBanner();
+            window.renderActiveView();
+        };
+
+        window.switchTab = function(tabName) {
+            APP_STATE.activeTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
+                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+            }
+
+            document.querySelectorAll('.tab-content').forEach(view => view.classList.add('hidden'));
+            const activeView = document.getElementById(`view-${tabName}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            window.renderActiveView();
+        };
+
+        window.handleSearch = function(query) {
+            APP_STATE.searchQuery = query.toLowerCase().trim();
+            window.renderActiveView();
+        };
+
+        window.renderActiveView = function() {
+            const currentClassId = APP_STATE.currentClassId;
+            const q = APP_STATE.searchQuery;
+
+            const classMat = APP_STATE.materials.filter(m => m.classId === currentClassId);
+            const classQuiz = APP_STATE.quizzes.filter(qz => qz.classId === currentClassId);
+            const classStudents = (APP_STATE.students || []).filter(s => s.classId === currentClassId);
+
+            if (document.getElementById('statTotalMaterials')) document.getElementById('statTotalMaterials').innerText = classMat.length;
+            if (document.getElementById('statTotalQuizzes')) document.getElementById('statTotalQuizzes').innerText = classQuiz.length;
+            if (document.getElementById('statTotalStudents')) document.getElementById('statTotalStudents').innerText = classStudents.length;
+
+            if (APP_STATE.activeTab === 'stream') {
+                const container = document.getElementById('announcementContainer');
+                const annList = APP_STATE.announcements.filter(a => a.classId === currentClassId && a.content.toLowerCase().includes(q));
+                
+                if (!container) return;
+                if (annList.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <i class="fa-solid fa-bullhorn text-3xl text-slate-300 mb-2"></i>
+                            <p class="text-xs text-slate-500 font-medium">Belum ada pengumuman di kelas ini.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = annList.map(a => `
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-xs">AS</div>
+                                    <div>
+                                        <div class="text-xs font-bold">${a.author || 'Agus Susanto, S.Kom'}</div>
+                                        <div class="text-[10px] text-slate-400">${a.date}</div>
+                                    </div>
+                                </div>
+                                ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteAnnouncement('${a.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">${a.content}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (APP_STATE.activeTab === 'materials') {
+                const container = document.getElementById('materialsContainer');
+                const matList = classMat.filter(m => m.title.toLowerCase().includes(q) || m.content.toLowerCase().includes(q));
+
+                if (!container) return;
+                if (matList.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <i class="fa-solid fa-book-open text-3xl text-slate-300 mb-2"></i>
+                            <p class="text-xs text-slate-500 font-medium">Belum ada bahan ajar materi yang diunggah.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = matList.map(m => `
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 rounded-md">${m.category}</span>
+                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteMaterial('${m.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
+                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">${m.title}</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-4">${m.content}</p>
+                            </div>
+                            <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+                                <button onclick="window.downloadSummaryTxt('${m.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold py-2 rounded-xl transition-all flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-download"></i> Unduh Modul (.txt)
+                                </button>
+                                ${m.link ? `<a href="${m.link}" target="_blank" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (APP_STATE.activeTab === 'quizzes') {
+                const container = document.getElementById('quizzesContainer');
+                const qzList = classQuiz.filter(qz => qz.title.toLowerCase().includes(q));
+
+                if (!container) return;
+                if (qzList.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <i class="fa-solid fa-gamepad text-3xl text-slate-300 mb-2"></i>
+                            <p class="text-xs text-slate-500 font-medium">Belum ada kuis interaktif yang rilis.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = qzList.map(qz => `
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-md">EduQuiz Live</span>
+                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteQuiz('${qz.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
+                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">${qz.title}</h3>
+                                <p class="text-xs text-slate-400 mb-4">${qz.questions ? qz.questions.length : 0} Soal Pilihan Ganda</p>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
+                                ${qz.externalLink 
+                                    ? `<a href="${qz.externalLink}" target="_blank" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"><i class="fa-solid fa-play"></i> Mainkan Kuis Luar</a>`
+                                    : `<button onclick="window.startQuiz('${qz.id}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"><i class="fa-solid fa-gamepad"></i> Mulai Kuis Gamifikasi</button>`
+                                }
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (APP_STATE.activeTab === 'assignments') {
+                const container = document.getElementById('assignmentsContainer');
+                const asgList = APP_STATE.assignments.filter(a => a.classId === currentClassId && a.title.toLowerCase().includes(q));
+
+                if (!container) return;
+                if (asgList.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <i class="fa-solid fa-list-check text-3xl text-slate-300 mb-2"></i>
+                            <p class="text-xs text-slate-500 font-medium">Belum ada penugasan di kelas ini.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = asgList.map(a => `
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">${a.title}</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">Tenggat: ${a.dueDate}</span>
+                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteAssignment('${a.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${a.instructions}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (APP_STATE.activeTab === 'schedule') {
+                const container = document.getElementById('scheduleContainer');
+                const schList = APP_STATE.schedules.filter(s => s.classId === currentClassId);
+
+                if (!container) return;
+                if (schList.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                            <i class="fa-solid fa-calendar-days text-3xl text-slate-300 mb-2"></i>
+                            <p class="text-xs text-slate-500 font-medium">Belum ada jadwal pelajaran tersimpan.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = schList.map(s => `
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex justify-between items-center">
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">${s.day}</span>
+                                <div class="text-xs font-bold text-slate-800 dark:text-slate-100">${s.time}</div>
+                                <div class="text-[10px] text-slate-400">${s.room || 'Lab Komputer'}</div>
+                            </div>
+                            ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteSchedule('${s.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (APP_STATE.activeTab === 'grades') {
+                const studentsTbody = document.getElementById('studentsTableBody');
+                const enrolledBadge = document.getElementById('enrolledStudentsBadge');
+                
+                if (enrolledBadge) enrolledBadge.innerText = `${classStudents.length} Siswa Terdaftar`;
+
+                if (studentsTbody) {
+                    if (classStudents.length === 0) {
+                        studentsTbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada siswa yang bergabung di kelas ini. Siswa dapat bergabung dengan kode kelas <b>${(APP_STATE.classes.find(c=>c.id===currentClassId)||{}).code||''}</b>.</td>
+                            </tr>
+                        `;
+                    } else {
+                        studentsTbody.innerHTML = classStudents.map((s, idx) => `
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="p-3 font-semibold text-slate-500">${idx + 1}</td>
+                                <td class="p-3 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-[10px]">
+                                        ${s.name.substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <span>${s.name}</span>
+                                </td>
+                                <td class="p-3 text-slate-500">${s.joinedAt || '-'}</td>
+                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Aktif</span></td>
+                                <td class="p-3 text-right">
+                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteStudent('${s.id}')" class="text-xs text-red-500 hover:text-red-700 font-semibold"><i class="fa-solid fa-user-minus"></i> Hapus</button>` : '<span class="text-slate-400 text-[10px]">-</span>'}
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
+                const tbody = document.getElementById('gradesTableBody');
+                const classGrades = APP_STATE.grades.filter(g => g.classId === currentClassId);
+
+                if (tbody) {
+                    if (classGrades.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada data pengerjaan kuis siswa.</td>
+                            </tr>
+                        `;
+                    } else {
+                        tbody.innerHTML = classGrades.map(g => `
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${g.studentName}</td>
+                                <td class="p-3 text-slate-500">${g.quizTitle}</td>
+                                <td class="p-3 font-bold text-emerald-600">${g.score} / 100</td>
+                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Selesai</span></td>
+                                <td class="p-3 text-slate-400 text-[10px]">${g.date}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            }
+        };
+
+        window.downloadSummaryTxt = function(matId) {
+            const m = APP_STATE.materials.find(x => x.id === matId);
+            if (!m) return;
+            const text = `MODUL PEMBELAJARAN INFORMATIKA\nJudul: ${m.title}\nKategori: ${m.category}\nPengajar: Agus Susanto, S.Kom\n-----------------------------------\n\n${m.content}\n\nTautan Lampiran: ${m.link || 'Tidak ada'}`;
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${m.title.replace(/\s+/g, '_')}_Modul.txt`;
+            a.click();
+        };
+
+        window.exportGradesCSV = function() {
+            const currentClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId);
+            const classGrades = APP_STATE.grades.filter(g => g.classId === APP_STATE.currentClassId);
+            if (classGrades.length === 0) {
+                window.showToast('Belum ada data nilai kuis untuk diekspor.', 'error');
+                return;
+            }
+            let csv = 'Nama Siswa,Judul Kuis,Skor,Tanggal\n';
+            classGrades.forEach(g => {
+                csv += `"${g.studentName}","${g.quizTitle}",${g.score},"${g.date}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Rekap_Nilai_${currentClass ? currentClass.code : 'Kelas'}.csv`;
+            a.click();
         };
 
         window.copyClassLink = function() {
@@ -1771,36 +1677,133 @@
         window.toggleDarkMode = function() {
             document.documentElement.classList.toggle('dark');
             const icon = document.getElementById('themeIcon');
-            if (document.documentElement.classList.contains('dark')) {
-                icon.className = 'fa-solid fa-sun';
-            } else {
-                icon.className = 'fa-solid fa-moon';
+            if (icon) {
+                icon.className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
             }
         };
 
         window.toggleAIChat = () => document.getElementById('aiChatWindow').classList.toggle('hidden');
 
-        window.sendQuickPrompt = text => {
-            document.getElementById('aiInput').value = text;
-            window.sendAIChat(new Event('submit'));
+        window.toggleAIApiKeyModal = () => {
+            const el = document.getElementById('aiKeySettings');
+            if (el) el.classList.toggle('hidden');
         };
 
-        window.sendAIChat = function(e) {
+        window.saveGeminiApiKey = () => {
+            const val = document.getElementById('geminiApiKeyInput')?.value.trim();
+            if (val) {
+                localStorage.setItem('EDUKELAS_GEMINI_KEY', val);
+                window.showToast('API Key Gemini berhasil disimpan!', 'success');
+                window.toggleAIApiKeyModal();
+            } else {
+                localStorage.removeItem('EDUKELAS_GEMINI_KEY');
+                window.showToast('API Key dikosongkan. Menggunakan Knowledge Base internal.', 'info');
+            }
+        };
+
+        window.sendQuickPrompt = text => {
+            const input = document.getElementById('aiInput');
+            if (input) {
+                input.value = text;
+                window.sendAIChat(new Event('submit'));
+            }
+        };
+
+        window.sendAIChat = async function(e) {
             e.preventDefault();
             const input = document.getElementById('aiInput');
-            const val = input.value.trim();
+            const val = input?.value.trim();
             if (!val) return;
 
             const msgs = document.getElementById('aiMessages');
-            msgs.innerHTML += `<div class="bg-blue-600 text-white p-2.5 rounded-2xl ml-8 text-right">${val}</div>`;
-            input.value = '';
+            const sendBtn = document.getElementById('aiSendBtn');
+            if (!msgs) return;
 
-            setTimeout(() => {
-                msgs.innerHTML += `<div class="bg-blue-50 dark:bg-slate-700/60 p-2.5 rounded-2xl mr-8">
-                    Jawaban EduAssist AI: Terkait pertanyaan <b>"${val}"</b> dalam materi Informatika Pak Agus Susanto, S.Kom, Anda dapat mempelajari konsep dasar algoritma dan jaringan pada modul Bahan Ajar yang tersedia.
-                </div>`;
-                msgs.scrollTop = msgs.scrollHeight;
-            }, 600);
+            // Tampilkan pesan siswa
+            msgs.innerHTML += `<div class="bg-blue-600 text-white p-2.5 rounded-2xl ml-8 text-right font-medium">${val}</div>`;
+            input.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+
+            // Indikator ketik AI
+            const loadingId = 'aiLoading_' + Date.now();
+            msgs.innerHTML += `
+                <div id="${loadingId}" class="bg-blue-50 dark:bg-slate-700/60 p-2.5 rounded-2xl mr-8 flex items-center space-x-2 text-slate-500">
+                    <i class="fa-solid fa-circle-notch animate-spin text-blue-600"></i>
+                    <span>EduAssist AI sedang berpikir...</span>
+                </div>
+            `;
+            msgs.scrollTop = msgs.scrollHeight;
+
+            // Kumpulkan modul materi yang sedang aktif di kelas ini
+            const activeClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId);
+            const classMaterials = APP_STATE.materials
+                .filter(m => m.classId === APP_STATE.currentClassId)
+                .map(m => `[Modul: ${m.title} | Kategori: ${m.category}]\nRingkasan: ${m.content}`)
+                .join('\n\n');
+
+            const apiKey = localStorage.getItem('EDUKELAS_GEMINI_KEY');
+
+            if (apiKey) {
+                // panggil API Gemini Resmi
+                try {
+                    const systemPrompt = `Kamu adalah EduAssist AI, asisten tutor cerdas untuk mata pelajaran Informatika di kelas ${activeClass ? activeClass.name : ''} yang diampu oleh Bapak Agus Susanto, S.Kom.
+Tugasmu adalah membantu siswa memahami konsep Informatika, menjelaskan algoritma, logika pemrograman, jaringan komputer, berpikir komputasional, serta menjawab pertanyaan siswa dengan bahasa yang ramah, jelas, dan memotivasi khas guru SMA/SMK.
+
+Berikut adalah daftar Modul Pembelajaran yang telah diunggah Guru di kelas ini:
+${classMaterials || 'Belum ada modul khusus diunggah, gunakan pengetahuan umum Informatika standar kurikulum SMA/SMK.'}
+
+Jawablah pertanyaan siswa berikut secara ringkas, jelas, dan edukatif. Gunakan format markdown tebal (*bold*) jika perlu.`;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: `${systemPrompt}\n\nPertanyaan Siswa: ${val}` }]
+                            }]
+                        })
+                    });
+
+                    const data = await res.json();
+                    document.getElementById(loadingId)?.remove();
+
+                    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+                        const reply = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                        msgs.innerHTML += `<div class="bg-blue-50 dark:bg-slate-700/60 p-3 rounded-2xl mr-6 text-slate-800 dark:text-slate-100 leading-relaxed">${reply}</div>`;
+                    } else {
+                        msgs.innerHTML += `<div class="bg-red-50 dark:bg-red-900/40 p-3 rounded-2xl mr-6 text-red-600 dark:text-red-300">Gagal mendapatkan respon dari Gemini AI. Periksa kembali API Key Anda.</div>`;
+                    }
+                } catch (err) {
+                    document.getElementById(loadingId)?.remove();
+                    msgs.innerHTML += `<div class="bg-red-50 dark:bg-red-900/40 p-3 rounded-2xl mr-6 text-red-600 dark:text-red-300">Terjadi kesalahan koneksi ke Gemini AI.</div>`;
+                }
+            } else {
+                // Fallback Knowledge Engine cerdas berbasis aturan materi Informatika
+                setTimeout(() => {
+                    document.getElementById(loadingId)?.remove();
+                    let responseText = "";
+                    const query = val.toLowerCase();
+
+                    if (query.includes("berpikir komputasional") || query.includes("logika")) {
+                        responseText = "<b>Berpikir Komputasional (Computational Thinking)</b> adalah landasan Informatika yang meliputi 4 pilar utama:<br>1. <b>Dekomposisi</b>: Memecah masalah besar jadi bagian kecil.<br>2. <b>Pengenalan Pola</b>: Mencari kesamaan pola masalah.<br>3. <b>Abstraksi</b>: Fokus pada informasi penting & mengabaikan hal tak relevan.<br>4. <b>Algoritma</b>: Menyusun langkah-langkah penyelesaian terstruktur.";
+                    } else if (query.includes("python") || query.includes("program") || query.includes("coding")) {
+                        responseText = "<b>Dasar Pemrograman Python</b>:<br>• <code>print('Halo Kelas Informatika!')</code> untuk mencetak teks.<br>• Variabel: <code>nama = 'Siswa'</code><br>• Percabangan: <code>if skor >= 75: print('Lulus')</code><br>• Perulangan: <code>for i in range(5): print(i)</code>";
+                    } else if (query.includes("jaringan") || query.includes("internet") || query.includes("ip")) {
+                        responseText = "<b>Jaringan Komputer & Internet</b>:<br>Jaringan komputer menghubungkan 2 atau lebih perangkat untuk berbagi data. Konsep penting meliputi <b>IP Address</b> (alamat unik perangkat), <b>Router</b>, <b>LAN/WAN</b>, dan protokol keamanan <b>HTTPS</b>.";
+                    } else if (query.includes("modul") || query.includes("materi")) {
+                        responseText = classMaterials 
+                            ? `<b>Modul Bahan Ajar Kelas ${activeClass ? activeClass.name : ''}</b>:<br>${classMaterials.replace(/\n/g, '<br>')}` 
+                            : "Saat ini Pak Agus Susanto, S.Kom belum mengunggah modul di kelas ini. Anda dapat meminta beliau mengunggah bahan ajar baru di tab <b>Bahan Ajar</b>!";
+                    } else {
+                        responseText = `Terkait pertanyaan <b>"${val}"</b> dalam pelajaran Informatika Pak Agus Susanto, S.Kom:<br><br>Konsep ini berkaitan erat dengan pemecahan masalah komputasional dan teknologi digital. Anda dapat membaca modul di tab <b>Bahan Ajar</b> atau memasukkan <i>Gemini API Key</i> gratis di tombol ⚙️ atas agar saya dapat memberikan jawaban serba tahu!`;
+                    }
+
+                    msgs.innerHTML += `<div class="bg-blue-50 dark:bg-slate-700/60 p-3 rounded-2xl mr-6 text-slate-800 dark:text-slate-100 leading-relaxed">${responseText}</div>`;
+                    msgs.scrollTop = msgs.scrollHeight;
+                }, 700);
+            }
+
+            msgs.scrollTop = msgs.scrollHeight;
         };
 
         function checkUrlParameters() {
@@ -1819,9 +1822,9 @@
             }
         }
 
-        /* INITALIZATION ON LOAD */
         window.onload = function() {
-            setupCloudListeners();
+            loadLocalState();
+            initFirebase();
             checkUrlParameters();
             window.renderAppHeaderAndRole();
             
