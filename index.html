@@ -263,7 +263,7 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: EDUQUIZ INTEGRATED (QUIZIZZ LOGIKA MATEMATIKA LIVE & SOLO) -->
+                <!-- TAB 3: EDUQUIZ INTEGRATED -->
                 <div id="view-quizzes" class="tab-content hidden space-y-6">
                     
                     <!-- Banner Utama Kuis Logika Matematika -->
@@ -900,6 +900,282 @@
             }
         };
 
+        window.showToast = function(message, type = 'info') {
+            let toast = document.getElementById('customToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customToast';
+                document.body.appendChild(toast);
+            }
+            toast.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-bold text-white transition-all duration-300 ${
+                type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-emerald-600' : 'bg-blue-600'
+            }`;
+            toast.innerText = message;
+            setTimeout(() => { toast.className += ' hidden'; }, 3500);
+        };
+
+        window.renderClassDropdown = function() {
+            const select = document.getElementById('classSelect');
+            if (!select) return;
+            const isGuru = APP_STATE.currentUser.role === 'guru';
+            const availableClasses = isGuru 
+                ? APP_STATE.classes 
+                : APP_STATE.classes.filter(c => APP_STATE.currentUser.joinedClasses.includes(c.id));
+
+            select.innerHTML = availableClasses.map(c => `
+                <option value="${c.id}" ${c.id === APP_STATE.currentClassId ? 'selected' : ''}>
+                    ${c.name} (${c.code})
+                </option>
+            `).join('');
+        };
+
+        window.renderCurrentClassBanner = function() {
+            const currClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId) || APP_STATE.classes[0];
+            if (!currClass) return;
+            const bannerName = document.getElementById('bannerClassName');
+            const bannerCode = document.getElementById('bannerClassCode');
+            if (bannerName) bannerName.innerText = currClass.name;
+            if (bannerCode) bannerCode.innerText = currClass.code;
+        };
+
+        window.renderActiveView = function() {
+            const currentClassId = APP_STATE.currentClassId;
+            const q = APP_STATE.searchQuery;
+
+            const classMat = APP_STATE.materials.filter(m => m.classId === currentClassId);
+            const classQuiz = APP_STATE.quizzes.filter(qz => qz.classId === currentClassId);
+            const classStudents = (APP_STATE.students || []).filter(s => s.classId === currentClassId);
+
+            if (document.getElementById('statTotalMaterials')) document.getElementById('statTotalMaterials').innerText = classMat.length;
+            if (document.getElementById('statTotalQuizzes')) document.getElementById('statTotalQuizzes').innerText = classQuiz.length + 1;
+            if (document.getElementById('statTotalStudents')) document.getElementById('statTotalStudents').innerText = classStudents.length;
+
+            if (APP_STATE.activeTab === 'quizzes') {
+                const container = document.getElementById('quizzesContainer');
+                if (container) {
+                    const qzList = classQuiz.filter(qz => qz.title.toLowerCase().includes(q));
+                    let html = `
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300 rounded-md">Quizizz Live & Solo</span>
+                                    <span class="text-[10px] text-amber-500 font-extrabold"><i class="fas fa-fire"></i> Featured</span>
+                                </div>
+                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Kuis Logika Matematika (Proposisi & Tabel Kebenaran)</h3>
+                                <p class="text-xs text-slate-400 mb-4">5 Soal Interaktif + Timer Bar + Combo Points</p>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex gap-2">
+                                <button onclick="window.openQuizizzEngine('solo')" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Main Solo
+                                </button>
+                                <button onclick="window.openQuizizzEngine('host')" class="bg-purple-900/40 text-purple-300 p-2.5 rounded-xl hover:bg-purple-800/60" title="Mode Host Live">
+                                    <i class="fa-solid fa-users text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    qzList.forEach(qz => {
+                        html += `
+                            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-md">EduQuiz</span>
+                                        ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteQuiz('${qz.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                    </div>
+                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">${qz.title}</h3>
+                                    <p class="text-xs text-slate-400 mb-4">${qz.questions ? qz.questions.length : 0} Soal Pilihan Ganda</p>
+                                </div>
+                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
+                                    <button onclick="window.showToast('Membuka kuis...', 'info')" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"><i class="fa-solid fa-gamepad"></i> Mulai Kuis</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            }
+
+            if (APP_STATE.activeTab === 'grades') {
+                const studentsTbody = document.getElementById('studentsTableBody');
+                const enrolledBadge = document.getElementById('enrolledStudentsBadge');
+                if (enrolledBadge) enrolledBadge.innerText = `${classStudents.length} Siswa Terdaftar`;
+
+                if (studentsTbody) {
+                    if (classStudents.length === 0) {
+                        studentsTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada siswa yang bergabung di kelas ini.</td></tr>`;
+                    } else {
+                        studentsTbody.innerHTML = classStudents.map((s, idx) => `
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="p-3 font-semibold text-slate-500">${idx + 1}</td>
+                                <td class="p-3 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-[10px]">
+                                        ${s.name.substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <span>${s.name}</span>
+                                </td>
+                                <td class="p-3 text-slate-500">${s.joinedAt || '-'}</td>
+                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Aktif</span></td>
+                                <td class="p-3 text-right">
+                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteStudent('${s.id}')" class="text-xs text-red-500 hover:text-red-700 font-semibold"><i class="fa-solid fa-user-minus"></i> Hapus</button>` : '<span class="text-slate-400 text-[10px]">-</span>'}
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
+                const tbody = document.getElementById('gradesTableBody');
+                const classGrades = APP_STATE.grades.filter(g => g.classId === currentClassId);
+
+                if (tbody) {
+                    if (classGrades.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada data pengerjaan kuis siswa.</td></tr>`;
+                    } else {
+                        tbody.innerHTML = classGrades.map(g => `
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${g.studentName}</td>
+                                <td class="p-3 text-slate-500">${g.quizTitle}</td>
+                                <td class="p-3 font-bold text-emerald-600">${g.score} / 100</td>
+                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Selesai</span></td>
+                                <td class="p-3 text-slate-400 text-[10px]">${g.date}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            }
+        };
+
+        window.renderAppHeaderAndRole = function() {
+            const user = APP_STATE.currentUser;
+            const isGuru = user.role === 'guru';
+
+            const avatarEl = document.getElementById('userAvatar');
+            const nameEl = document.getElementById('userNameDisplay');
+            const roleEl = document.getElementById('userRoleDisplay');
+            const adminBtn = document.getElementById('adminLoginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (avatarEl) avatarEl.innerText = isGuru ? 'AS' : (user.name ? user.name.substring(0, 2).toUpperCase() : 'SP');
+            if (nameEl) nameEl.innerText = isGuru ? 'Agus Susanto, S.Kom' : (user.name || 'Siswa Pengunjung');
+            if (roleEl) roleEl.innerText = isGuru ? 'Admin / Pengajar' : 'Akses Siswa';
+
+            if (adminBtn) adminBtn.classList.toggle('hidden', isGuru);
+            if (logoutBtn) logoutBtn.classList.toggle('hidden', !isGuru);
+
+            const teacherEls = ['createClassBtn', 'teacherAnnouncementBox', 'addMaterialBtn', 'addQuizBtn', 'addAssignmentBtn', 'addScheduleBtn', 'clearDataBtn'];
+            teacherEls.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', !isGuru);
+            });
+
+            window.renderClassDropdown();
+            window.renderCurrentClassBanner();
+            window.renderActiveView();
+        };
+
+        window.changeActiveClass = function(classId) {
+            APP_STATE.currentClassId = classId;
+            saveLocalState();
+            window.renderCurrentClassBanner();
+            window.renderActiveView();
+        };
+
+        window.switchTab = function(tabName) {
+            APP_STATE.activeTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
+                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+            }
+
+            document.querySelectorAll('.tab-content').forEach(view => view.classList.add('hidden'));
+            const activeView = document.getElementById(`view-${tabName}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            window.renderActiveView();
+        };
+
+        window.handleSearch = function(query) {
+            APP_STATE.searchQuery = query.toLowerCase().trim();
+            window.renderActiveView();
+        };
+
+        window.handleAdminLogin = function(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+
+            if ((u === 'admin' || u === 'agus.susanto') && p === 'admin123') {
+                APP_STATE.currentUser = { name: 'Agus Susanto, S.Kom', role: 'guru', joinedClasses: APP_STATE.classes.map(c => c.id) };
+                saveLocalState();
+                window.closeAdminModal();
+                window.renderAppHeaderAndRole();
+                window.showToast('Berhasil masuk sebagai Admin Guru!', 'success');
+            } else {
+                window.showToast('Username atau password Admin salah!', 'error');
+            }
+        };
+
+        window.handleLogout = function() {
+            APP_STATE.currentUser = { name: '', role: 'siswa', joinedClasses: ['INF-XE'] };
+            saveLocalState();
+            window.renderAppHeaderAndRole();
+            window.showToast('Telah keluar dari akun.', 'info');
+        };
+
+        window.handleStudentJoin = async function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('joinStudentName');
+            const codeInput = document.getElementById('joinClassCode');
+            
+            if (!nameInput || !codeInput) return;
+
+            const name = nameInput.value.trim();
+            const code = codeInput.value.trim().toUpperCase();
+
+            if (!name) {
+                window.showToast('Silakan masukkan nama lengkap siswa!', 'error');
+                return;
+            }
+
+            const targetClass = APP_STATE.classes.find(c => c.code.trim().toUpperCase() === code);
+            if (!targetClass) {
+                window.showToast(`Kode kelas "${code}" tidak ditemukan! Pastikan kode kelas sesuai.`, 'error');
+                return;
+            }
+
+            if (!APP_STATE.currentUser.joinedClasses.includes(targetClass.id)) {
+                APP_STATE.currentUser.joinedClasses.push(targetClass.id);
+            }
+            APP_STATE.currentUser.name = name;
+            APP_STATE.currentClassId = targetClass.id;
+
+            const studentId = 'std_' + Date.now();
+            const newStudent = {
+                id: studentId,
+                name: name,
+                classId: targetClass.id,
+                joinedAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+            };
+
+            if (!APP_STATE.students) APP_STATE.students = [];
+            const existing = APP_STATE.students.find(s => s.name.toLowerCase() === name.toLowerCase() && s.classId === targetClass.id);
+            if (!existing) {
+                APP_STATE.students.push(newStudent);
+                await saveCloudDoc('students', studentId, newStudent);
+            }
+
+            saveLocalState();
+            window.closeJoinModal();
+            window.renderAppHeaderAndRole();
+            window.showToast(`Selamat datang ${name} di kelas ${targetClass.name}!`, 'success');
+        };
+
         window.toggleQuizizzAudio = function() {
             qzAudioEnabled = !qzAudioEnabled;
             const btnTxt = document.getElementById('quizAudioTxt');
@@ -1128,7 +1404,6 @@
                 confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             }
 
-            // Sync score automatically to LMS Gradebook
             const studentName = APP_STATE.currentUser.name || 'Siswa Pengunjung';
             const gradeId = 'grd_qz_' + Date.now();
             const gradeObj = {
@@ -1144,372 +1419,6 @@
             saveLocalState();
             window.renderActiveView();
             window.showToast(`Nilai kuis Logika Matematika (${gradeObj.score}/100) telah direkap ke LMS!`, 'success');
-        };
-
-        async function initFirebase() {
-            try {
-                if (typeof __firebase_config !== 'undefined') {
-                    const firebaseConfig = JSON.parse(__firebase_config);
-                    const app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                    isCloudConnected = true;
-                    setupCloudListeners();
-                } else {
-                    loadLocalState();
-                }
-            } catch (e) {
-                loadLocalState();
-            }
-        }
-
-        function loadLocalState() {
-            const saved = localStorage.getItem('EDUKELAS_STATE_V4');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    APP_STATE.currentUser = parsed.currentUser || APP_STATE.currentUser;
-                    APP_STATE.currentClassId = parsed.currentClassId || APP_STATE.currentClassId;
-                    if (!isCloudConnected) {
-                        APP_STATE.students = parsed.students || [];
-                        APP_STATE.materials = parsed.materials || [];
-                        APP_STATE.quizzes = parsed.quizzes || [];
-                        APP_STATE.assignments = parsed.assignments || [];
-                        APP_STATE.announcements = parsed.announcements || [];
-                        APP_STATE.schedules = parsed.schedules || [];
-                        APP_STATE.grades = parsed.grades || [];
-                        APP_STATE.classes = parsed.classes && parsed.classes.length > 0 ? parsed.classes : DEFAULT_CLASSES;
-                    }
-                } catch(e) {}
-            }
-        }
-
-        function saveLocalState() {
-            localStorage.setItem('EDUKELAS_STATE_V4', JSON.stringify(APP_STATE));
-        }
-
-        async function saveCloudDoc(collName, docId, data) {
-            saveLocalState();
-            if (isCloudConnected && db) {
-                try {
-                    const ref = doc(db, 'artifacts', appId, 'public', 'data', collName, docId);
-                    await setDoc(ref, data);
-                } catch (e) {}
-            }
-        }
-
-        async function deleteCloudDoc(collName, docId) {
-            saveLocalState();
-            if (isCloudConnected && db) {
-                try {
-                    const ref = doc(db, 'artifacts', appId, 'public', 'data', collName, docId);
-                    await deleteDoc(ref);
-                } catch (e) {}
-            }
-        }
-
-        function setupCloudListeners() {
-            if (!isCloudConnected || !db) {
-                loadLocalState();
-                return;
-            }
-
-            const collections = ['classes', 'students', 'materials', 'quizzes', 'assignments', 'announcements', 'schedules', 'grades'];
-
-            collections.forEach(collName => {
-                const path = collection(db, 'artifacts', appId, 'public', 'data', collName);
-                onSnapshot(path, (snapshot) => {
-                    const items = [];
-                    snapshot.forEach(doc => {
-                        items.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    if (collName === 'classes') {
-                        APP_STATE.classes = items.length > 0 ? items : DEFAULT_CLASSES;
-                    } else {
-                        APP_STATE[collName] = items;
-                    }
-                    
-                    saveLocalState();
-                    window.renderAppHeaderAndRole();
-                });
-            });
-        }
-
-        window.renderAppHeaderAndRole = function() {
-            const user = APP_STATE.currentUser;
-            const isGuru = user.role === 'guru';
-
-            const avatarEl = document.getElementById('userAvatar');
-            const nameEl = document.getElementById('userNameDisplay');
-            const roleEl = document.getElementById('userRoleDisplay');
-            const adminBtn = document.getElementById('adminLoginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            if (avatarEl) avatarEl.innerText = isGuru ? 'AS' : (user.name ? user.name.substring(0, 2).toUpperCase() : 'SP');
-            if (nameEl) nameEl.innerText = isGuru ? 'Agus Susanto, S.Kom' : (user.name || 'Siswa Pengunjung');
-            if (roleEl) roleEl.innerText = isGuru ? 'Admin / Pengajar' : 'Akses Siswa';
-
-            if (adminBtn) adminBtn.classList.toggle('hidden', isGuru);
-            if (logoutBtn) logoutBtn.classList.toggle('hidden', !isGuru);
-
-            const teacherEls = ['createClassBtn', 'teacherAnnouncementBox', 'addMaterialBtn', 'addQuizBtn', 'addAssignmentBtn', 'addScheduleBtn', 'clearDataBtn'];
-            teacherEls.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.toggle('hidden', !isGuru);
-            });
-
-            window.renderClassDropdown();
-            window.renderCurrentClassBanner();
-            window.renderActiveView();
-        };
-
-        window.showToast = function(message, type = 'info') {
-            let toast = document.getElementById('customToast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'customToast';
-                document.body.appendChild(toast);
-            }
-            toast.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-bold text-white transition-all duration-300 ${
-                type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-emerald-600' : 'bg-blue-600'
-            }`;
-            toast.innerText = message;
-            setTimeout(() => { toast.className += ' hidden'; }, 3500);
-        };
-
-        window.handleAdminLogin = function(e) {
-            e.preventDefault();
-            const u = document.getElementById('adminUser').value.trim();
-            const p = document.getElementById('adminPass').value.trim();
-
-            if ((u === 'admin' || u === 'agus.susanto') && p === 'admin123') {
-                APP_STATE.currentUser = { name: 'Agus Susanto, S.Kom', role: 'guru', joinedClasses: APP_STATE.classes.map(c => c.id) };
-                saveLocalState();
-                window.closeAdminModal();
-                window.renderAppHeaderAndRole();
-                window.showToast('Berhasil masuk sebagai Admin Guru!', 'success');
-            } else {
-                window.showToast('Username atau password Admin salah!', 'error');
-            }
-        };
-
-        window.handleLogout = function() {
-            APP_STATE.currentUser = { name: '', role: 'siswa', joinedClasses: ['INF-XE'] };
-            saveLocalState();
-            window.renderAppHeaderAndRole();
-            window.showToast('Telah keluar dari akun.', 'info');
-        };
-
-        window.handleStudentJoin = async function(e) {
-            e.preventDefault();
-            const nameInput = document.getElementById('joinStudentName');
-            const codeInput = document.getElementById('joinClassCode');
-            if (!nameInput || !codeInput) return;
-
-            const name = nameInput.value.trim();
-            const code = codeInput.value.trim().toUpperCase();
-
-            const targetClass = APP_STATE.classes.find(c => c.code === code);
-            if (!targetClass) {
-                window.showToast('Kode kelas tidak ditemukan! Periksa kembali kode kelas Anda.', 'error');
-                return;
-            }
-
-            if (!APP_STATE.currentUser.joinedClasses.includes(targetClass.id)) {
-                APP_STATE.currentUser.joinedClasses.push(targetClass.id);
-            }
-            APP_STATE.currentUser.name = name;
-            APP_STATE.currentClassId = targetClass.id;
-
-            const studentId = 'std_' + Date.now();
-            const newStudent = {
-                id: studentId,
-                name: name,
-                classId: targetClass.id,
-                joinedAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-            };
-
-            if (!APP_STATE.students) APP_STATE.students = [];
-            const existing = APP_STATE.students.find(s => s.name.toLowerCase() === name.toLowerCase() && s.classId === targetClass.id);
-            if (!existing) {
-                APP_STATE.students.push(newStudent);
-                await saveCloudDoc('students', studentId, newStudent);
-            }
-
-            saveLocalState();
-            window.closeJoinModal();
-            window.renderAppHeaderAndRole();
-            window.showToast(`Selamat datang ${name} di kelas ${targetClass.name}!`, 'success');
-        };
-
-        window.renderClassDropdown = function() {
-            const select = document.getElementById('classSelect');
-            if (!select) return;
-            const isGuru = APP_STATE.currentUser.role === 'guru';
-            const availableClasses = isGuru 
-                ? APP_STATE.classes 
-                : APP_STATE.classes.filter(c => APP_STATE.currentUser.joinedClasses.includes(c.id));
-
-            select.innerHTML = availableClasses.map(c => `
-                <option value="${c.id}" ${c.id === APP_STATE.currentClassId ? 'selected' : ''}>
-                    ${c.name} (${c.code})
-                </option>
-            `).join('');
-        };
-
-        window.renderCurrentClassBanner = function() {
-            const currClass = APP_STATE.classes.find(c => c.id === APP_STATE.currentClassId) || APP_STATE.classes[0];
-            if (!currClass) return;
-            const bannerName = document.getElementById('bannerClassName');
-            const bannerCode = document.getElementById('bannerClassCode');
-            if (bannerName) bannerName.innerText = currClass.name;
-            if (bannerCode) bannerCode.innerText = currClass.code;
-        };
-
-        window.changeActiveClass = function(classId) {
-            APP_STATE.currentClassId = classId;
-            saveLocalState();
-            window.renderCurrentClassBanner();
-            window.renderActiveView();
-        };
-
-        window.switchTab = function(tabName) {
-            APP_STATE.activeTab = tabName;
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
-                btn.classList.add('text-slate-600', 'dark:text-slate-400');
-            });
-
-            const activeBtn = document.getElementById(`tab-${tabName}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'dark:text-blue-400', 'shadow-sm');
-                activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
-            }
-
-            document.querySelectorAll('.tab-content').forEach(view => view.classList.add('hidden'));
-            const activeView = document.getElementById(`view-${tabName}`);
-            if (activeView) activeView.classList.remove('hidden');
-
-            window.renderActiveView();
-        };
-
-        window.handleSearch = function(query) {
-            APP_STATE.searchQuery = query.toLowerCase().trim();
-            window.renderActiveView();
-        };
-
-        window.renderActiveView = function() {
-            const currentClassId = APP_STATE.currentClassId;
-            const q = APP_STATE.searchQuery;
-
-            const classMat = APP_STATE.materials.filter(m => m.classId === currentClassId);
-            const classQuiz = APP_STATE.quizzes.filter(qz => qz.classId === currentClassId);
-            const classStudents = (APP_STATE.students || []).filter(s => s.classId === currentClassId);
-
-            if (document.getElementById('statTotalMaterials')) document.getElementById('statTotalMaterials').innerText = classMat.length;
-            if (document.getElementById('statTotalQuizzes')) document.getElementById('statTotalQuizzes').innerText = classQuiz.length + 1;
-            if (document.getElementById('statTotalStudents')) document.getElementById('statTotalStudents').innerText = classStudents.length;
-
-            if (APP_STATE.activeTab === 'quizzes') {
-                const container = document.getElementById('quizzesContainer');
-                if (container) {
-                    const qzList = classQuiz.filter(qz => qz.title.toLowerCase().includes(q));
-                    let html = `
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="px-2 py-0.5 text-[10px] font-bold bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300 rounded-md">Quizizz Live & Solo</span>
-                                    <span class="text-[10px] text-amber-500 font-extrabold"><i class="fas fa-fire"></i> Featured</span>
-                                </div>
-                                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Kuis Logika Matematika (Proposisi & Tabel Kebenaran)</h3>
-                                <p class="text-xs text-slate-400 mb-4">5 Soal Interaktif + Timer Bar + Combo Points</p>
-                            </div>
-                            <div class="pt-3 border-t border-slate-100 dark:border-slate-700 flex gap-2">
-                                <button onclick="window.openQuizizzEngine('solo')" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-play"></i> Main Solo
-                                </button>
-                                <button onclick="window.openQuizizzEngine('host')" class="bg-purple-900/40 text-purple-300 p-2.5 rounded-xl hover:bg-purple-800/60" title="Mode Host Live">
-                                    <i class="fa-solid fa-users text-xs"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-
-                    qzList.forEach(qz => {
-                        html += `
-                            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                                <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="px-2 py-0.5 text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-md">EduQuiz</span>
-                                        ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteQuiz('${qz.id}')" class="text-xs text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>` : ''}
-                                    </div>
-                                    <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">${qz.title}</h3>
-                                    <p class="text-xs text-slate-400 mb-4">${qz.questions ? qz.questions.length : 0} Soal Pilihan Ganda</p>
-                                </div>
-                                <div class="pt-3 border-t border-slate-100 dark:border-slate-700">
-                                    <button onclick="window.showToast('Membuka kuis...', 'info')" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"><i class="fa-solid fa-gamepad"></i> Mulai Kuis</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    container.innerHTML = html;
-                }
-            }
-
-            if (APP_STATE.activeTab === 'grades') {
-                const studentsTbody = document.getElementById('studentsTableBody');
-                const enrolledBadge = document.getElementById('enrolledStudentsBadge');
-                if (enrolledBadge) enrolledBadge.innerText = `${classStudents.length} Siswa Terdaftar`;
-
-                if (studentsTbody) {
-                    if (classStudents.length === 0) {
-                        studentsTbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada siswa yang bergabung di kelas ini.</td></tr>`;
-                    } else {
-                        studentsTbody.innerHTML = classStudents.map((s, idx) => `
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                <td class="p-3 font-semibold text-slate-500">${idx + 1}</td>
-                                <td class="p-3 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-[10px]">
-                                        ${s.name.substring(0, 2).toUpperCase()}
-                                    </div>
-                                    <span>${s.name}</span>
-                                </td>
-                                <td class="p-3 text-slate-500">${s.joinedAt || '-'}</td>
-                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Aktif</span></td>
-                                <td class="p-3 text-right">
-                                    ${APP_STATE.currentUser.role === 'guru' ? `<button onclick="window.deleteStudent('${s.id}')" class="text-xs text-red-500 hover:text-red-700 font-semibold"><i class="fa-solid fa-user-minus"></i> Hapus</button>` : '<span class="text-slate-400 text-[10px]">-</span>'}
-                                </td>
-                            </tr>
-                        `).join('');
-                    }
-                }
-
-                const tbody = document.getElementById('gradesTableBody');
-                const classGrades = APP_STATE.grades.filter(g => g.classId === currentClassId);
-
-                if (tbody) {
-                    if (classGrades.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs">Belum ada data pengerjaan kuis siswa.</td></tr>`;
-                    } else {
-                        tbody.innerHTML = classGrades.map(g => `
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">${g.studentName}</td>
-                                <td class="p-3 text-slate-500">${g.quizTitle}</td>
-                                <td class="p-3 font-bold text-emerald-600">${g.score} / 100</td>
-                                <td class="p-3"><span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 rounded-full font-bold">Selesai</span></td>
-                                <td class="p-3 text-slate-400 text-[10px]">${g.date}</td>
-                            </tr>
-                        `).join('');
-                    }
-                }
-            }
         };
 
         window.exportGradesCSV = function() {
@@ -1612,11 +1521,131 @@
             }, 600);
         };
 
+        async function initFirebase() {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    isCloudConnected = true;
+                    setupCloudListeners();
+                } else {
+                    loadLocalState();
+                }
+            } catch (e) {
+                loadLocalState();
+            }
+        }
+
+        function loadLocalState() {
+            const saved = localStorage.getItem('EDUKELAS_STATE_V4');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    APP_STATE.currentUser = parsed.currentUser || APP_STATE.currentUser;
+                    APP_STATE.currentClassId = parsed.currentClassId || APP_STATE.currentClassId;
+                    if (!isCloudConnected) {
+                        APP_STATE.students = parsed.students || [];
+                        APP_STATE.materials = parsed.materials || [];
+                        APP_STATE.quizzes = parsed.quizzes || [];
+                        APP_STATE.assignments = parsed.assignments || [];
+                        APP_STATE.announcements = parsed.announcements || [];
+                        APP_STATE.schedules = parsed.schedules || [];
+                        APP_STATE.grades = parsed.grades || [];
+                        APP_STATE.classes = parsed.classes && parsed.classes.length > 0 ? parsed.classes : DEFAULT_CLASSES;
+                    }
+                } catch(e) {}
+            }
+        }
+
+        function saveLocalState() {
+            localStorage.setItem('EDUKELAS_STATE_V4', JSON.stringify(APP_STATE));
+        }
+
+        async function saveCloudDoc(collName, docId, data) {
+            saveLocalState();
+            if (isCloudConnected && db) {
+                try {
+                    const ref = doc(db, 'artifacts', appId, 'public', 'data', collName, docId);
+                    await setDoc(ref, data);
+                } catch (e) {}
+            }
+        }
+
+        async function deleteCloudDoc(collName, docId) {
+            saveLocalState();
+            if (isCloudConnected && db) {
+                try {
+                    const ref = doc(db, 'artifacts', appId, 'public', 'data', collName, docId);
+                    await deleteDoc(ref);
+                } catch (e) {}
+            }
+        }
+
+        function setupCloudListeners() {
+            if (!isCloudConnected || !db) {
+                loadLocalState();
+                return;
+            }
+
+            const collections = ['classes', 'students', 'materials', 'quizzes', 'assignments', 'announcements', 'schedules', 'grades'];
+
+            collections.forEach(collName => {
+                const path = collection(db, 'artifacts', appId, 'public', 'data', collName);
+                onSnapshot(path, (snapshot) => {
+                    const items = [];
+                    snapshot.forEach(doc => {
+                        items.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    if (collName === 'classes') {
+                        APP_STATE.classes = items.length > 0 ? items : DEFAULT_CLASSES;
+                    } else {
+                        APP_STATE[collName] = items;
+                    }
+                    
+                    saveLocalState();
+                    window.renderAppHeaderAndRole();
+                });
+            });
+        }
+
+        window.checkUrlParameters = function() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                const cleanCode = code.trim().toUpperCase();
+                const found = APP_STATE.classes.find(c => c.code.trim().toUpperCase() === cleanCode);
+                if (found) {
+                    APP_STATE.currentClassId = found.id;
+                    setTimeout(() => {
+                        const joinInput = document.getElementById('joinClassCode');
+                        if (joinInput) joinInput.value = found.code;
+                        window.openJoinModal();
+                    }, 300);
+                } else {
+                    window.showToast(`Kode kelas "${cleanCode}" dari link tidak ditemukan!`, 'error');
+                }
+            }
+        };
+
         window.onload = function() {
             loadLocalState();
             initFirebase();
             window.renderAppHeaderAndRole();
-            window.renderKaTeXIn(document.body);
+            window.checkUrlParameters();
+            
+            window.addEventListener('storage', function() {
+                loadLocalState();
+                window.renderAppHeaderAndRole();
+            });
         };
     </script>
 </body>
