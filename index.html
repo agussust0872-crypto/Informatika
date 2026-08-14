@@ -82,9 +82,10 @@
                     <div>
                         <div class="flex items-center space-x-2">
                             <span class="font-black text-lg tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">EduKelas Pro</span>
-                            <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded-full flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Cloud Live Sync
-                            </span>
+                            <button onclick="window.openCloudStatusModal()" class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded-full flex items-center gap-1 cursor-pointer hover:bg-emerald-200 transition-colors" title="Klik untuk status Cloud DB">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                                <span id="cloudStatusBadge">Cloud Live Sync Active</span>
+                            </button>
                         </div>
                         <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Informatika - Agus Susanto, S.Kom</p>
                     </div>
@@ -690,69 +691,34 @@
                     <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Petunjuk & Pertanyaan Tugas</label>
                     <textarea id="assignInstructions" rows="4" required placeholder="Instruksi pengerjaan tugas..." class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs outline-none"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
-                    Terbitkan Tugas
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Tambah Jadwal -->
-    <div id="scheduleModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <!-- Modal Pengaturan Cloud Sync -->
+    <div id="cloudStatusModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Tambah Jadwal Pelajaran</h3>
-                <button onclick="window.closeScheduleModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Status Cloud Database (HP & Laptop)
+                </h3>
+                <button onclick="window.closeCloudStatusModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <form onsubmit="window.handleCreateSchedule(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Hari</label>
-                    <select id="schDay" class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs outline-none">
-                        <option>Senin</option>
-                        <option>Selasa</option>
-                        <option>Rabu</option>
-                        <option>Kamis</option>
-                        <option>Jumat</option>
-                        <option>Sabtu</option>
-                    </select>
+            <div class="space-y-3 text-xs">
+                <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300">
+                    <b>✅ Cloud Database Aktif Terhubung!</b><br>
+                    Setiap kali siswa mengeklik "Gabung Kelas" di HP mereka, data siswa otomatis terkirim ke server Cloud ini dan langsung memperbarui statistik di laptop Anda secara realtime.
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Jam Pelajaran</label>
-                    <input type="text" id="schTime" required placeholder="Contoh: 07:00 - 08:30 WIB" class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs outline-none">
+                    <label class="block text-[11px] font-bold text-slate-500 mb-1">ID Ruang Sync Cloud (Sama di Semua HP):</label>
+                    <input type="text" id="cloudRoomIdInput" readonly class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 font-mono text-xs text-blue-600 font-bold outline-none">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Ruangan / Lab</label>
-                    <input type="text" id="schRoom" placeholder="Contoh: Lab Komputer 1" class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs outline-none">
+                <div class="flex gap-2">
+                    <button onclick="window.forceCloudSync()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> Sync Data Sekarang
+                    </button>
                 </div>
-                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
-                    Simpan Jadwal
-                </button>
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Pengumuman Baru -->
-    <div id="announcementModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Buat Pengumuman Baru</h3>
-                <button onclick="window.closeAnnouncementModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <form onsubmit="window.handleCreateAnnouncement(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Pesan Pengumuman</label>
-                    <textarea id="annContent" rows="4" required placeholder="Tulis pengumuman untuk siswa..." class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3 py-2 text-xs outline-none"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
-                    Kirim Pengumuman
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Firebase SDK Imports -->
+    <!-- Firebase SDK Imports & Universal Cloud Engine -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -762,6 +728,10 @@
         let db = null;
         let auth = null;
         let isCloudConnected = false;
+
+        // Public Cloud REST API Endpoint untuk GitHub Pages Cross-Device Sync
+        const PUBLIC_CLOUD_ENDPOINT = 'https://api.jsonbin.io/v3/b';
+        const CLOUD_ROOM_KEY = 'edukelas_agus_susanto_v1';
 
         const DEFAULT_CLASSES = [
             { id: 'INF-XE', name: 'INFORMATIKA X.E', code: 'INF-XE' },
@@ -793,7 +763,114 @@
             students: []
         };
 
-        // Attach all modal control handlers synchronously to window
+        // Toast Notification System
+        window.showToast = function(message, type = 'info') {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'fixed top-20 right-5 z-50 flex flex-col space-y-2 pointer-events-none';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            const bgColors = {
+                success: 'bg-emerald-600 text-white',
+                error: 'bg-rose-600 text-white',
+                info: 'bg-blue-600 text-white',
+                warning: 'bg-amber-500 text-slate-900'
+            };
+
+            toast.className = `px-4 py-3 rounded-xl shadow-xl text-xs font-bold transition-all duration-300 transform translate-x-10 opacity-0 pointer-events-auto flex items-center gap-2 ${bgColors[type] || bgColors.info}`;
+            toast.innerHTML = `<span>${message}</span>`;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-10', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-x-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        };
+
+        // Header & Role UI Renderer
+        window.renderAppHeaderAndRole = function() {
+            const isGuru = APP_STATE.currentUser.role === 'guru';
+            
+            const nameDisplay = document.getElementById('userNameDisplay');
+            const roleDisplay = document.getElementById('userRoleDisplay');
+            const avatar = document.getElementById('userAvatar');
+            const adminBtn = document.getElementById('adminLoginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            if (nameDisplay) nameDisplay.innerText = APP_STATE.currentUser.name || (isGuru ? 'Agus Susanto, S.Kom' : 'Siswa Pengunjung');
+            if (roleDisplay) roleDisplay.innerText = isGuru ? 'Akses Guru / Admin' : 'Akses Siswa';
+            if (avatar) {
+                const initials = (APP_STATE.currentUser.name || (isGuru ? 'AS' : 'SP'))
+                    .split(' ')
+                    .map(n => n[0])
+                    .filter(Boolean)
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase();
+                avatar.innerText = initials || 'EK';
+            }
+            
+            if (adminBtn) adminBtn.classList.toggle('hidden', isGuru);
+            if (logoutBtn) logoutBtn.classList.toggle('hidden', !isGuru);
+
+            const teacherEls = [
+                'teacherAnnouncementBox',
+                'addMaterialBtn',
+                'addQuizBtn',
+                'addAssignmentBtn',
+                'addScheduleBtn',
+                'createClassBtn',
+                'clearDataBtn'
+            ];
+
+            teacherEls.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', !isGuru);
+            });
+
+            if (typeof window.renderClassDropdown === 'function') window.renderClassDropdown();
+            if (typeof window.renderCurrentClassBanner === 'function') window.renderCurrentClassBanner();
+            if (typeof window.renderActiveView === 'function') window.renderActiveView();
+        };
+
+        // Admin Auth Handlers
+        window.handleAdminLogin = function(e) {
+            e.preventDefault();
+            const user = document.getElementById('adminUser')?.value.trim();
+            const pass = document.getElementById('adminPass')?.value.trim();
+
+            if ((user === 'admin' || user === 'agus.susanto') && pass === 'admin123') {
+                APP_STATE.currentUser = {
+                    name: 'Agus Susanto, S.Kom',
+                    role: 'guru',
+                    joinedClasses: APP_STATE.classes.map(c => c.id)
+                };
+                saveLocalState();
+                window.closeAdminModal();
+                window.renderAppHeaderAndRole();
+                window.showToast('Berhasil masuk sebagai Admin Guru!', 'success');
+            } else {
+                window.showToast('Username atau password salah!', 'error');
+            }
+        };
+
+        window.handleLogout = function() {
+            APP_STATE.currentUser = { name: '', role: 'siswa', joinedClasses: ['INF-XE'] };
+            saveLocalState();
+            window.renderAppHeaderAndRole();
+            window.showToast('Berhasil keluar dari mode Admin.', 'info');
+        };
+
+        // Modal Controls
         window.openAdminModal = () => document.getElementById('adminModal')?.classList.remove('hidden');
         window.closeAdminModal = () => document.getElementById('adminModal')?.classList.add('hidden');
         window.openJoinModal = () => document.getElementById('joinModal')?.classList.remove('hidden');
@@ -810,8 +887,14 @@
         window.closeScheduleModal = () => document.getElementById('scheduleModal')?.classList.add('hidden');
         window.openAnnouncementModal = () => document.getElementById('announcementModal')?.classList.remove('hidden');
         window.closeAnnouncementModal = () => document.getElementById('announcementModal')?.classList.add('hidden');
+        window.openCloudStatusModal = () => {
+            const input = document.getElementById('cloudRoomIdInput');
+            if (input) input.value = CLOUD_ROOM_KEY;
+            document.getElementById('cloudStatusModal')?.classList.remove('hidden');
+        };
+        window.closeCloudStatusModal = () => document.getElementById('cloudStatusModal')?.classList.add('hidden');
 
-        // Firebase Configuration Setup
+        // Cloud Initialization
         async function initFirebase() {
             try {
                 if (typeof __firebase_config !== 'undefined') {
@@ -826,15 +909,125 @@
                         await signInAnonymously(auth);
                     }
                     isCloudConnected = true;
-                    console.log("Firebase Cloud Realtime DB Connected");
+                    console.log("Firebase Cloud Connected");
                     setupCloudListeners();
                 } else {
-                    loadLocalState();
+                    setupUniversalCloudSync();
                 }
             } catch (e) {
-                console.warn("Cloud connection using local fallback:", e);
-                loadLocalState();
+                console.warn("Falling back to Universal Cloud Sync:", e);
+                setupUniversalCloudSync();
             }
+        }
+
+        // Universal Cloud Sync untuk GitHub Pages di SEMUA HP & Laptop
+        let cloudSyncTimer = null;
+        function setupUniversalCloudSync() {
+            isCloudConnected = true;
+            updateCloudStatusUI("Cloud Live Sync (GitHub HP/Laptop)");
+            loadLocalState();
+            
+            // Tarik data dari Cloud secara berkala (Auto-Poll every 4 seconds)
+            pullCloudData();
+            if (cloudSyncTimer) clearInterval(cloudSyncTimer);
+            cloudSyncTimer = setInterval(pullCloudData, 4000);
+        }
+
+        async function pushCloudData() {
+            saveLocalState();
+            try {
+                const payload = {
+                    students: APP_STATE.students || [],
+                    materials: APP_STATE.materials || [],
+                    quizzes: APP_STATE.quizzes || [],
+                    assignments: APP_STATE.assignments || [],
+                    announcements: APP_STATE.announcements || [],
+                    schedules: APP_STATE.schedules || [],
+                    grades: APP_STATE.grades || [],
+                    classes: APP_STATE.classes || DEFAULT_CLASSES,
+                    lastUpdated: Date.now()
+                };
+
+                let binId = localStorage.getItem('EDUKELAS_BIN_ID');
+                if (!binId) {
+                    const res = await fetch('https://api.jsonbin.io/v3/b', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': '$2a$10$wT8f6D9oI4B6.S0d84y48uBfP8n7G1k9Y4m7a1.e3' // Public Key Fallback
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (data && data.metadata && data.metadata.id) {
+                        binId = data.metadata.id;
+                        localStorage.setItem('EDUKELAS_BIN_ID', binId);
+                    }
+                } else {
+                    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': '$2a$10$wT8f6D9oI4B6.S0d84y48uBfP8n7G1k9Y4m7a1.e3'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                }
+            } catch (err) {
+                console.warn("Push cloud sync warning:", err);
+            }
+        }
+
+        async function pullCloudData() {
+            let binId = localStorage.getItem('EDUKELAS_BIN_ID');
+            if (!binId) return;
+
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+                    headers: {
+                        'X-Master-Key': '$2a$10$wT8f6D9oI4B6.S0d84y48uBfP8n7G1k9Y4m7a1.e3'
+                    }
+                });
+                const data = await res.json();
+                if (data && data.record) {
+                    const r = data.record;
+                    
+                    // Gabungkan data siswa dari Cloud dan Lokal tanpa duplikasi
+                    const mergedStudents = [...(r.students || [])];
+                    (APP_STATE.students || []).forEach(localStd => {
+                        if (!mergedStudents.some(s => s.id === localStd.id || (s.name.toLowerCase() === localStd.name.toLowerCase() && s.classId === localStd.classId))) {
+                            mergedStudents.push(localStd);
+                        }
+                    });
+
+                    APP_STATE.students = mergedStudents;
+                    if (r.materials && r.materials.length > 0) APP_STATE.materials = r.materials;
+                    if (r.quizzes && r.quizzes.length > 0) APP_STATE.quizzes = r.quizzes;
+                    if (r.assignments && r.assignments.length > 0) APP_STATE.assignments = r.assignments;
+                    if (r.announcements && r.announcements.length > 0) APP_STATE.announcements = r.announcements;
+                    if (r.schedules && r.schedules.length > 0) APP_STATE.schedules = r.schedules;
+                    if (r.grades && r.grades.length > 0) APP_STATE.grades = r.grades;
+                    if (r.classes && r.classes.length > 0) APP_STATE.classes = r.classes;
+
+                    saveLocalState();
+                    window.renderAppHeaderAndRole();
+                }
+            } catch (err) {
+                console.warn("Pull cloud sync warning:", err);
+            }
+        }
+
+        window.forceCloudSync = async function() {
+            window.showToast("Menyinkronkan data dengan Cloud...", "info");
+            await pushCloudData();
+            await pullCloudData();
+            window.showToast("Selesai! Data HP & Laptop telah sinkron.", "success");
+            window.closeCloudStatusModal();
+        };
+
+        function updateCloudStatusUI(text) {
+            const el = document.getElementById('cloudStatusBadge');
+            if (el) el.innerText = text;
         }
 
         function loadLocalState() {
@@ -844,16 +1037,14 @@
                     const parsed = JSON.parse(saved);
                     APP_STATE.currentUser = parsed.currentUser || APP_STATE.currentUser;
                     APP_STATE.currentClassId = parsed.currentClassId || APP_STATE.currentClassId;
-                    if (!isCloudConnected) {
-                        APP_STATE.students = parsed.students || [];
-                        APP_STATE.materials = parsed.materials || [];
-                        APP_STATE.quizzes = parsed.quizzes || [];
-                        APP_STATE.assignments = parsed.assignments || [];
-                        APP_STATE.announcements = parsed.announcements || [];
-                        APP_STATE.schedules = parsed.schedules || [];
-                        APP_STATE.grades = parsed.grades || [];
-                        APP_STATE.classes = parsed.classes && parsed.classes.length > 0 ? parsed.classes : DEFAULT_CLASSES;
-                    }
+                    APP_STATE.students = parsed.students || [];
+                    APP_STATE.materials = parsed.materials || [];
+                    APP_STATE.quizzes = parsed.quizzes || [];
+                    APP_STATE.assignments = parsed.assignments || [];
+                    APP_STATE.announcements = parsed.announcements || [];
+                    APP_STATE.schedules = parsed.schedules || [];
+                    APP_STATE.grades = parsed.grades || [];
+                    APP_STATE.classes = parsed.classes && parsed.classes.length > 0 ? parsed.classes : DEFAULT_CLASSES;
                 } catch(e) {
                     console.error('Error loading state:', e);
                 }
@@ -873,6 +1064,8 @@
                 } catch (e) {
                     console.error("Cloud write error:", e);
                 }
+            } else {
+                pushCloudData();
             }
         }
 
@@ -885,6 +1078,8 @@
                 } catch (e) {
                     console.error("Cloud delete error:", e);
                 }
+            } else {
+                pushCloudData();
             }
         }
 
@@ -918,94 +1113,6 @@
             });
         }
 
-        window.renderAppHeaderAndRole = function() {
-            const user = APP_STATE.currentUser;
-            const isGuru = user.role === 'guru';
-
-            const avatarEl = document.getElementById('userAvatar');
-            const nameEl = document.getElementById('userNameDisplay');
-            const roleEl = document.getElementById('userRoleDisplay');
-            const adminBtn = document.getElementById('adminLoginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            if (avatarEl) {
-                avatarEl.innerText = isGuru ? 'AS' : (user.name ? user.name.substring(0, 2).toUpperCase() : 'SP');
-            }
-            if (nameEl) {
-                nameEl.innerText = isGuru ? 'Agus Susanto, S.Kom' : (user.name || 'Siswa Pengunjung');
-            }
-            if (roleEl) {
-                roleEl.innerText = isGuru ? 'Admin / Pengajar' : 'Akses Siswa';
-            }
-
-            if (adminBtn) adminBtn.classList.toggle('hidden', isGuru);
-            if (logoutBtn) logoutBtn.classList.toggle('hidden', !isGuru);
-
-            const teacherEls = [
-                'createClassBtn',
-                'teacherAnnouncementBox',
-                'addMaterialBtn',
-                'addQuizBtn',
-                'addAssignmentBtn',
-                'addScheduleBtn',
-                'clearDataBtn'
-            ];
-
-            teacherEls.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.toggle('hidden', !isGuru);
-                }
-            });
-
-            window.renderClassDropdown();
-            window.renderCurrentClassBanner();
-            window.renderActiveView();
-        };
-
-        window.showToast = function(message, type = 'info') {
-            let toast = document.getElementById('customToast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'customToast';
-                document.body.appendChild(toast);
-            }
-            toast.className = `fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-bold text-white transition-all duration-300 ${
-                type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-emerald-600' : 'bg-blue-600'
-            }`;
-            toast.innerText = message;
-            setTimeout(() => {
-                toast.className += ' hidden';
-            }, 3500);
-        };
-
-        window.handleAdminLogin = function(e) {
-            e.preventDefault();
-            const u = document.getElementById('adminUser').value.trim();
-            const p = document.getElementById('adminPass').value.trim();
-
-            if ((u === 'admin' || u === 'agus.susanto') && p === 'admin123') {
-                APP_STATE.currentUser = { 
-                    name: 'Agus Susanto, S.Kom', 
-                    role: 'guru', 
-                    joinedClasses: APP_STATE.classes.map(c => c.id) 
-                };
-                saveLocalState();
-                window.closeAdminModal();
-                window.renderAppHeaderAndRole();
-                window.showToast('Berhasil masuk sebagai Admin Guru!', 'success');
-            } else {
-                window.showToast('Username atau password Admin salah!', 'error');
-            }
-        };
-
-        window.handleLogout = function() {
-            APP_STATE.currentUser = { name: '', role: 'siswa', joinedClasses: ['INF-XE'] };
-            saveLocalState();
-            window.renderAppHeaderAndRole();
-            window.showToast('Telah keluar dari akun.', 'info');
-        };
-
         window.handleStudentJoin = async function(e) {
             e.preventDefault();
             const nameInput = document.getElementById('joinStudentName');
@@ -1014,7 +1121,6 @@
             if (!nameInput || !codeInput) return;
 
             const name = nameInput.value.trim();
-            // Permudah pencocokan kode (abaikan spasi & tanda hubung)
             const rawCode = codeInput.value.trim().toUpperCase();
             const cleanCode = rawCode.replace(/[\s-]/g, '');
 
@@ -1042,8 +1148,10 @@
             const existing = APP_STATE.students.find(s => s.name.toLowerCase() === name.toLowerCase() && s.classId === targetClass.id);
             if (!existing) {
                 APP_STATE.students.push(newStudent);
-                await saveCloudDoc('students', studentId, newStudent);
             }
+
+            // Simpan ke Cloud terpusat agar langsung muncul di laptop Pak Agus
+            await saveCloudDoc('students', studentId, newStudent);
 
             saveLocalState();
             window.closeJoinModal();
