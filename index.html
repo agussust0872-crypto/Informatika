@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduKelas Pro LMS - INFORMATIKA X.E</title>
+    <title>EduKelas Pro LMS - Multi Kelas & AI Tutor</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -39,7 +39,7 @@
         .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between relative">
 
     <div>
         <!-- Real-Time Database Status Bar & Mode Indicator -->
@@ -54,6 +54,15 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    <!-- Class Selector Dropdown in Bar -->
+                    <div class="flex items-center gap-1.5 bg-indigo-800/80 px-3 py-1 rounded-full text-xs border border-indigo-700">
+                        <i class="fa-solid fa-layer-group text-amber-400"></i>
+                        <span class="text-indigo-200">Pilih Kelas:</span>
+                        <select id="class-select-dropdown" onchange="switchActiveClass(this.value)" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+                            <option value="INF-XE" class="bg-indigo-900 text-white">INFORMATIKA X.E (INF-XE)</option>
+                        </select>
+                    </div>
+
                     <!-- Role Status Badge -->
                     <span id="role-badge" class="bg-slate-800 text-slate-300 border border-slate-700 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
                         <i class="fa-solid fa-user-graduate"></i> Mode: Siswa
@@ -75,13 +84,13 @@
 
                 <div class="relative z-10 flex flex-col lg:flex-row justify-between lg:items-center gap-6">
                     <div>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-md text-indigo-200 mb-3 border border-white/10">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-md text-indigo-200 mb-3 border border-white/10" id="header-subject-badge">
                             <i class="fa-solid fa-graduation-cap mr-2"></i> Mata Pelajaran Informatika
                         </span>
-                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight" id="header-class-title">
                             INFORMATIKA X.E
                         </h1>
-                        <p class="mt-2 text-indigo-200 font-medium flex items-center gap-2">
+                        <p class="mt-2 text-indigo-200 font-medium flex items-center gap-2" id="header-teacher-name">
                             <i class="fa-solid fa-chalkboard-user"></i> Pengajar: Agus Susanto, S.Kom
                         </p>
                     </div>
@@ -89,13 +98,19 @@
                     <div class="flex flex-wrap items-center gap-3">
                         <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 text-center min-w-[120px]">
                             <span class="block text-[10px] uppercase tracking-wider text-indigo-200 font-bold">Kode Kelas</span>
-                            <span class="text-2xl font-black text-amber-300 tracking-wider">INF-XE</span>
+                            <span class="text-2xl font-black text-amber-300 tracking-wider" id="header-class-code">INF-XE</span>
                         </div>
                         
                         <!-- Student Join Button -->
                         <button onclick="openModal('modal-join')" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-5 py-3 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
                             <i class="fa-solid fa-right-to-bracket"></i>
                             <span>Gabung Kode Kelas</span>
+                        </button>
+
+                        <!-- Teacher Add Class Button -->
+                        <button onclick="openModalGuru('modal-add-class')" class="guru-only hidden bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-4 py-3 rounded-2xl shadow-lg transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>+ Kelas Baru</span>
                         </button>
                     </div>
                 </div>
@@ -131,16 +146,16 @@
             <!-- Content Layout: 2 Columns -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- Left Main Content Column (2 cols wide) -->
                 <div class="lg:col-span-2 space-y-6">
 
+                    <!-- TAB 1: ANGGOTA & REKAP NILAI -->
                     <div id="content-tab-anggota" class="tab-content space-y-6">
                         <!-- Student List Card -->
                         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
                                 <div>
                                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                        <i class="fa-solid fa-users text-indigo-600"></i> Daftar Siswa Terdaftar (Anggota Kelas)
+                                        <i class="fa-solid fa-users text-indigo-600"></i> Daftar Siswa Terdaftar (<span class="class-label-inline">INFORMATIKA X.E</span>)
                                     </h2>
                                     <p class="text-xs text-slate-500">Siswa yang mendaftar melalui HP / Laptop otomatis tampil di sini secara real-time.</p>
                                 </div>
@@ -179,7 +194,7 @@
                                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                                         <i class="fa-solid fa-award text-amber-500"></i> Rekap Hasil Pengerjaan EduQuiz
                                     </h2>
-                                    <p class="text-xs text-slate-500">Nilai kuis siswa yang telah diselesaikan.</p>
+                                    <p class="text-xs text-slate-500">Nilai kuis siswa yang telah diselesaikan pada kelas ini.</p>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
@@ -211,11 +226,12 @@
                         </div>
                     </div>
 
+                    <!-- TAB 2: BAHAN AJAR / MODUL -->
                     <div id="content-tab-materi" class="tab-content hidden space-y-4">
                         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                                 <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-folder-open text-indigo-600"></i> Modul & Bahan Ajar Informatika X
+                                    <i class="fa-solid fa-folder-open text-indigo-600"></i> Modul & Bahan Ajar (<span class="class-label-inline">INFORMATIKA X.E</span>)
                                 </h2>
                                 <!-- Teacher action to add material -->
                                 <button onclick="openModalGuru('modal-add-materi')" class="guru-only hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
@@ -223,28 +239,17 @@
                                 </button>
                             </div>
                             <div id="materi-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 transition bg-slate-50/50">
-                                    <div class="flex items-start justify-between">
-                                        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg mb-3">
-                                            <i class="fa-solid fa-network-wired"></i>
-                                        </div>
-                                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Bab 1</span>
-                                    </div>
-                                    <h3 class="font-bold text-slate-800">Berpikir Komputasional</h3>
-                                    <p class="text-xs text-slate-500 mt-1">Dekomposisi, Pengenalan Pola, Abstraksi, dan Algoritma.</p>
-                                    <button onclick="showToast('Membuka Modul 1')" class="mt-4 w-full text-xs font-bold text-indigo-600 hover:bg-indigo-50 py-2 rounded-xl transition border border-indigo-200">
-                                        <i class="fa-solid fa-download mr-1"></i> Pelajari Materi
-                                    </button>
-                                </div>
+                                <!-- Dynamic Materials will render here -->
                             </div>
                         </div>
                     </div>
 
+                    <!-- TAB 3: EDUQUIZ -->
                     <div id="content-tab-kuis" class="tab-content hidden space-y-4">
                         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                             <div class="flex items-center justify-between mb-2">
                                 <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-gamepad text-indigo-600"></i> EduQuiz Interactive
+                                    <i class="fa-solid fa-gamepad text-indigo-600"></i> EduQuiz Interactive (<span class="class-label-inline">INFORMATIKA X.E</span>)
                                 </h2>
                                 <button onclick="openModalGuru('modal-add-kuis')" class="guru-only hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
                                     <i class="fa-solid fa-plus"></i> Tambah Soal Kuis
@@ -254,43 +259,7 @@
 
                             <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-6">
                                 <div id="quiz-questions-container" class="space-y-6">
-                                    <!-- Default Question 1 -->
-                                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                                        <p class="text-sm font-bold text-slate-800">1. Urutan langkah-langkah logis untuk menyelesaikan masalah disebut...</p>
-                                        <div class="space-y-2 text-xs font-medium">
-                                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
-                                                <input type="radio" name="q1" value="A" required class="text-indigo-600">
-                                                <span>A. Dekomposisi</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
-                                                <input type="radio" name="q1" value="B" class="text-indigo-600">
-                                                <span>B. Algoritma</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
-                                                <input type="radio" name="q1" value="C" class="text-indigo-600">
-                                                <span>C. Abstraksi</span>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Default Question 2 -->
-                                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                                        <p class="text-sm font-bold text-slate-800">2. Komponen fisik komputer yang dapat disentuh dinamakan...</p>
-                                        <div class="space-y-2 text-xs font-medium">
-                                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
-                                                <input type="radio" name="q2" value="A" required class="text-indigo-600">
-                                                <span>A. Software</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
-                                                <input type="radio" name="q2" value="B" class="text-indigo-600">
-                                                <span>B. Hardware</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
-                                                <input type="radio" name="q2" value="C" class="text-indigo-600">
-                                                <span>C. Brainware</span>
-                                            </label>
-                                        </div>
-                                    </div>
+                                    <!-- Dynamic Questions -->
                                 </div>
 
                                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition shadow-md flex items-center justify-center gap-2">
@@ -300,30 +269,26 @@
                         </div>
                     </div>
 
+                    <!-- TAB 4: PENGUMUMAN -->
                     <div id="content-tab-pengumuman" class="tab-content hidden space-y-4">
                         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                             <div class="flex items-center justify-between mb-4">
                                 <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-bullhorn text-amber-500"></i> Pengumuman Kelas
+                                    <i class="fa-solid fa-bullhorn text-amber-500"></i> Pengumuman Kelas (<span class="class-label-inline">INFORMATIKA X.E</span>)
                                 </h2>
                                 <button onclick="openModalGuru('modal-add-pengumuman')" class="guru-only hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
                                     <i class="fa-solid fa-plus"></i> Tambah Pengumuman
                                 </button>
                             </div>
                             <div id="announcement-list" class="space-y-4">
-                                <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-xs font-bold text-amber-800">Pengajar: Agus Susanto, S.Kom</span>
-                                        <span class="text-[10px] text-amber-600 font-medium">Hari ini</span>
-                                    </div>
-                                    <p class="text-sm text-slate-700 font-medium">Selamat datang di kelas Informatika X.E! Silakan klik tombol "Gabung Kode Kelas" di atas dan masukkan nama Anda agar terdaftar resmi.</p>
-                                </div>
+                                <!-- Dynamic Announcements -->
                             </div>
                         </div>
                     </div>
 
                 </div>
 
+                <!-- Right Sidebar Column (1 col wide) -->
                 <div class="space-y-6">
                     <!-- Teacher Profile Widget -->
                     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
@@ -333,7 +298,7 @@
                                 AS
                             </div>
                             <div>
-                                <h4 class="font-extrabold text-slate-800 text-base">Agus Susanto, S.Kom</h4>
+                                <h4 class="font-extrabold text-slate-800 text-base" id="sidebar-teacher-name">Agus Susanto, S.Kom</h4>
                                 <p class="text-xs text-slate-500 font-medium">Guru Informatika</p>
                             </div>
                         </div>
@@ -342,24 +307,54 @@
                         </a>
                     </div>
 
+                    <!-- Class List & Selector Widget -->
+                    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Kelas Aktif</h3>
+                            <button onclick="openModalGuru('modal-add-class')" class="guru-only hidden text-xs text-indigo-600 font-bold hover:underline">+ Tambah</button>
+                        </div>
+                        <div id="sidebar-class-list" class="space-y-2">
+                            <!-- Rendered Class Badges -->
+                        </div>
+                    </div>
+
                     <!-- Class Statistics Widget -->
                     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Statistik Kelas</h3>
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Statistik Kelas Ini</h3>
                         <div class="grid grid-cols-3 gap-2 text-center">
                             <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                                 <span class="block text-2xl font-black text-indigo-600" id="stat-siswa-count">0</span>
                                 <span class="text-[10px] font-bold text-slate-400 uppercase">Siswa</span>
                             </div>
                             <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                                <span class="block text-2xl font-black text-indigo-600" id="stat-materi-count">1</span>
+                                <span class="block text-2xl font-black text-indigo-600" id="stat-materi-count">0</span>
                                 <span class="text-[10px] font-bold text-slate-400 uppercase">Materi</span>
                             </div>
                             <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                                <span class="block text-2xl font-black text-indigo-600" id="stat-kuis-count">2</span>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">Soal Kuis</span>
+                                <span class="block text-2xl font-black text-indigo-600" id="stat-kuis-count">0</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Soal</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- AI Bot Promo Card Widget -->
+                    <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-6 text-white shadow-md relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center font-bold text-xl shadow">
+                                🤖
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-sm">AI EduBot Tutor</h4>
+                                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">Gemini 3 Powered</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-indigo-100 mt-2">Punya pertanyaan seputar koding, algoritma, atau materi Informatika? Tanya AI EduBot kapan saja!</p>
+                        <button onclick="toggleChatDrawer()" class="mt-4 w-full bg-white text-indigo-900 font-extrabold text-xs py-2.5 rounded-xl shadow-md hover:bg-amber-300 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-comments"></i> Buka Chat AI Tutor
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
@@ -370,6 +365,71 @@
         <p>© 2026 EduKelas Pro LMS. Disusun untuk Informatika SMA/SMK.</p>
     </footer>
 
+    <!-- FLOATING AI CHATBOT TRIGGER BUTTON -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button onclick="toggleChatDrawer()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold p-4 rounded-full shadow-2xl flex items-center gap-3 transform hover:scale-105 transition border-2 border-white/40">
+            <span class="text-2xl animate-bounce">🤖</span>
+            <span class="hidden sm:inline text-xs font-extrabold pr-1">Tanya AI EduBot</span>
+            <span class="w-2.5 h-2.5 bg-emerald-400 rounded-full border border-white"></span>
+        </button>
+    </div>
+
+    <!-- AI CHATBOT DRAWER / MODAL -->
+    <div id="ai-chat-drawer" class="fixed bottom-20 right-4 sm:right-6 w-[92vw] sm:w-[420px] h-[540px] bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 hidden flex flex-col overflow-hidden transition-all duration-300">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-indigo-900 to-purple-900 text-white p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-900 font-bold flex items-center justify-center text-lg shadow">
+                    🤖
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-sm flex items-center gap-1.5">
+                        AI EduBot Tutor
+                        <span class="text-[9px] bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 px-2 py-0.2 rounded-full font-medium">Online</span>
+                    </h4>
+                    <p class="text-[10px] text-indigo-200">Asisten Belajar Informatika Pak Agus</p>
+                </div>
+            </div>
+            <button onclick="toggleChatDrawer()" class="text-indigo-200 hover:text-white p-1 text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar text-xs bg-slate-50">
+            <!-- Bot Initial Greeting -->
+            <div class="flex items-start gap-2 max-w-[85%]">
+                <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold shrink-0 text-xs">
+                    🤖
+                </div>
+                <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 shadow-sm text-slate-700 space-y-1">
+                    <p class="font-bold text-indigo-700">Halo! Saya AI EduBot 👋</p>
+                    <p>Ada yang bisa saya bantu tentang materi Informatika hari ini? Kamu bisa bertanya soal Berpikir Komputasional, Algoritma, Koding, atau Jaringan Komputer!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Prompts suggestions -->
+        <div class="p-2 bg-white border-t border-slate-100 flex gap-1.5 overflow-x-auto custom-scrollbar">
+            <button onclick="sendQuickPrompt('Apa itu Algoritma dan contohnya?')" class="text-[10px] whitespace-nowrap bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-full border border-indigo-100">
+                💡 Apa itu Algoritma?
+            </button>
+            <button onclick="sendQuickPrompt('Jelaskan 4 pilar Berpikir Komputasional!')" class="text-[10px] whitespace-nowrap bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-full border border-indigo-100">
+                🧩 Berpikir Komputasional
+            </button>
+            <button onclick="sendQuickPrompt('Apa perbedaan Hardware dan Software?')" class="text-[10px] whitespace-nowrap bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2.5 py-1 rounded-full border border-indigo-100">
+                💻 Hardware vs Software
+            </button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chat-form" onsubmit="handleSendChatMessage(event)" class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+            <input type="text" id="chat-input" required placeholder="Tanyakan materi Informatika..." class="flex-1 px-3.5 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button type="submit" id="btn-chat-send" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-2.5 rounded-xl transition shadow flex items-center justify-center">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
 
     <!-- MODAL 1: GABUNG KODE KELAS (SISWA) -->
     <div id="modal-join" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -391,7 +451,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kode Kelas</label>
-                    <input type="text" id="join-code" required value="INF-XE" placeholder="INF-XE" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold tracking-wider text-indigo-600 uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="join-code" required placeholder="Contoh: INF-XE" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold tracking-wider text-indigo-600 uppercase focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
                 <div class="pt-2">
@@ -433,7 +493,38 @@
         </div>
     </div>
 
-    <!-- MODAL 3: TAMBAH MATERI BARU (GURU ONLY) -->
+    <!-- MODAL 3: TAMBAH KELAS BARU (GURU ONLY) -->
+    <div id="modal-add-class" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-emerald-600"></i> Buat Kelas Baru
+                </h3>
+                <button onclick="closeModal('modal-add-class')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddClass(event)" class="mt-4 space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Kelas</label>
+                    <input type="text" id="class-name-input" required placeholder="Contoh: INFORMATIKA X.F" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kode Kelas Unik</label>
+                    <input type="text" id="class-code-input" required placeholder="Contoh: INF-XF" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold uppercase tracking-wider text-emerald-700 focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mata Pelajaran</label>
+                    <input type="text" id="class-subject-input" required value="Informatika" placeholder="Contoh: Informatika" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Pengajar</label>
+                    <input type="text" id="class-teacher-input" required value="Agus Susanto, S.Kom" placeholder="Nama Guru" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition shadow">Buat Kelas Baru</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: TAMBAH MATERI BARU (GURU ONLY) -->
     <div id="modal-add-materi" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -450,6 +541,60 @@
                     <textarea id="materi-desc" required rows="3" placeholder="Penjelasan singkat mengenai materi..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500"></textarea>
                 </div>
                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Simpan Modul</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: TAMBAH SOAL KUIS (GURU ONLY) -->
+    <div id="modal-add-kuis" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-indigo-600"></i> Tambah Soal Kuis Baru</h3>
+                <button onclick="closeModal('modal-add-kuis')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddKuis(event)" class="mt-4 space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pertanyaan Soal</label>
+                    <input type="text" id="kuis-question" required placeholder="Contoh: Otak dari sistem komputer adalah..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilihan A</label>
+                    <input type="text" id="kuis-opt-a" required placeholder="Contoh: RAM" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilihan B</label>
+                    <input type="text" id="kuis-opt-b" required placeholder="Contoh: CPU / Processor" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilihan C</label>
+                    <input type="text" id="kuis-opt-c" required placeholder="Contoh: Harddisk" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kunci Jawaban Benar</label>
+                    <select id="kuis-correct" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold">
+                        <option value="A">Pilihan A</option>
+                        <option value="B" selected>Pilihan B</option>
+                        <option value="C">Pilihan C</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Tambah Soal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 6: TAMBAH PENGUMUMAN (GURU ONLY) -->
+    <div id="modal-add-pengumuman" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-amber-600"></i> Buat Pengumuman Baru</h3>
+                <button onclick="closeModal('modal-add-pengumuman')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddPengumuman(event)" class="mt-4 space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Pengumuman</label>
+                    <textarea id="announcement-text" required rows="4" placeholder="Tuliskan pengumuman penting untuk siswa kelas ini..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold py-2.5 rounded-xl text-sm transition">Terbitkan Pengumuman</button>
             </form>
         </div>
     </div>
@@ -475,6 +620,12 @@
         let db = null;
         let auth = null;
         let currentUser = null;
+
+        // Active State Variables
+        window.currentClassCode = 'INF-XE';
+        window.classesList = [
+            { code: 'INF-XE', name: 'INFORMATIKA X.E', subject: 'Informatika', teacher: 'Agus Susanto, S.Kom' }
+        ];
 
         async function initFirebase() {
             try {
@@ -531,12 +682,24 @@
         function setupRealtimeListeners() {
             if (!db) return;
 
+            /* 0. Realtime Classes Listener */
+            const classesColRef = collection(db, 'artifacts', appId, 'public', 'data', 'classes');
+            onSnapshot(classesColRef, (snapshot) => {
+                const list = [];
+                snapshot.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
+                if (list.length > 0) {
+                    window.classesList = list;
+                }
+                renderClassesUI();
+            }, (err) => console.error("Classes error:", err));
+
             /* 1. Students Realtime Listener */
             const studentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
             onSnapshot(studentsColRef, (snapshot) => {
                 const list = [];
                 snapshot.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
-                renderStudentTable(list);
+                window.allStudents = list;
+                renderStudentTable();
             }, (err) => console.error("Students snapshot error:", err));
 
             /* 2. Quiz Scores Realtime Listener */
@@ -544,7 +707,8 @@
             onSnapshot(quizColRef, (snapshot) => {
                 const scores = [];
                 snapshot.forEach((doc) => scores.push({ id: doc.id, ...doc.data() }));
-                renderQuizScores(scores);
+                window.allScores = scores;
+                renderQuizScores();
             }, (err) => console.error("Quiz scores snapshot error:", err));
 
             /* 3. Materials Realtime Listener */
@@ -552,11 +716,81 @@
             onSnapshot(materiColRef, (snapshot) => {
                 const materials = [];
                 snapshot.forEach((doc) => materials.push({ id: doc.id, ...doc.data() }));
-                renderMaterials(materials);
+                window.allMaterials = materials;
+                renderMaterials();
             }, (err) => console.error("Materials snapshot error:", err));
+
+            /* 4. Quizzes Questions Realtime Listener */
+            const quizQuestColRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_questions');
+            onSnapshot(quizQuestColRef, (snapshot) => {
+                const questions = [];
+                snapshot.forEach((doc) => questions.push({ id: doc.id, ...doc.data() }));
+                window.allQuestions = questions;
+                renderQuizQuestions();
+            }, (err) => console.error("Quiz questions error:", err));
+
+            /* 5. Announcements Realtime Listener */
+            const annColRef = collection(db, 'artifacts', appId, 'public', 'data', 'announcements');
+            onSnapshot(annColRef, (snapshot) => {
+                const announcements = [];
+                snapshot.forEach((doc) => announcements.push({ id: doc.id, ...doc.data() }));
+                window.allAnnouncements = announcements;
+                renderAnnouncements();
+            }, (err) => console.error("Announcements error:", err));
         }
 
-        window.renderStudentTable = function(list) {
+        window.renderClassesUI = function() {
+            const dropdown = document.getElementById('class-select-dropdown');
+            const sidebarList = document.getElementById('sidebar-class-list');
+            
+            let dropHtml = '';
+            let sideHtml = '';
+
+            window.classesList.forEach(c => {
+                const isSelected = c.code === window.currentClassCode;
+                dropHtml += `<option value="${c.code}" ${isSelected ? 'selected' : ''} class="bg-indigo-900 text-white">${c.name} (${c.code})</option>`;
+                
+                sideHtml += `
+                    <div onclick="switchActiveClass('${c.code}')" class="p-3 rounded-2xl border ${isSelected ? 'border-indigo-500 bg-indigo-50/80 font-bold' : 'border-slate-100 hover:border-slate-200 bg-slate-50'} transition cursor-pointer flex items-center justify-between">
+                        <div>
+                            <span class="block text-xs text-slate-800 font-bold">${c.name}</span>
+                            <span class="text-[10px] text-indigo-600 font-extrabold tracking-wider">${c.code}</span>
+                        </div>
+                        ${isSelected ? '<i class="fa-solid fa-circle-check text-indigo-600 text-sm"></i>' : '<i class="fa-solid fa-chevron-right text-slate-300 text-xs"></i>'}
+                    </div>
+                `;
+            });
+
+            dropdown.innerHTML = dropHtml;
+            sidebarList.innerHTML = sideHtml;
+
+            // Update Header Info
+            const currentObj = window.classesList.find(c => c.code === window.currentClassCode) || window.classesList[0];
+            if (currentObj) {
+                document.getElementById('header-class-title').innerText = currentObj.name;
+                document.getElementById('header-class-code').innerText = currentObj.code;
+                document.getElementById('header-teacher-name').innerHTML = `<i class="fa-solid fa-chalkboard-user"></i> Pengajar: ${currentObj.teacher || 'Agus Susanto, S.Kom'}`;
+                document.getElementById('sidebar-teacher-name').innerText = currentObj.teacher || 'Agus Susanto, S.Kom';
+                document.getElementById('header-subject-badge').innerHTML = `<i class="fa-solid fa-graduation-cap mr-2"></i> Mata Pelajaran ${currentObj.subject || 'Informatika'}`;
+                
+                // Update inline class labels
+                document.querySelectorAll('.class-label-inline').forEach(el => el.innerText = currentObj.name);
+            }
+        };
+
+        window.switchActiveClass = function(code) {
+            window.currentClassCode = code;
+            renderClassesUI();
+            renderStudentTable();
+            renderQuizScores();
+            renderMaterials();
+            renderQuizQuestions();
+            renderAnnouncements();
+            showToast(`Beralih ke kelas: ${code}`);
+        };
+
+        window.renderStudentTable = function() {
+            const list = (window.allStudents || []).filter(s => s.classCode === window.currentClassCode);
             const tbody = document.getElementById('student-table-body');
             const badge = document.getElementById('student-count-badge');
             const statBadge = document.getElementById('stat-siswa-count');
@@ -568,7 +802,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="5" class="py-8 text-center text-slate-400">
-                            Belum ada siswa yang bergabung di kelas ini. Siswa dapat bergabung dengan kode kelas <strong>INF-XE</strong>.
+                            Belum ada siswa yang bergabung di kelas <strong>${window.currentClassCode}</strong>.
                         </td>
                     </tr>
                 `;
@@ -607,10 +841,11 @@
             tbody.innerHTML = html;
         };
 
-        window.renderQuizScores = function(scores) {
+        window.renderQuizScores = function() {
+            const scores = (window.allScores || []).filter(s => s.classCode === window.currentClassCode || !s.classCode);
             const tbody = document.getElementById('quiz-scores-body');
             if (scores.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">Belum ada data pengerjaan kuis siswa.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">Belum ada data pengerjaan kuis siswa di kelas ini.</td></tr>`;
                 return;
             }
 
@@ -619,7 +854,7 @@
                 html += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 font-bold text-slate-800">${item.studentName || 'Anonim'}</td>
-                        <td class="p-3 text-slate-600 text-xs">${item.quizTitle || 'EduQuiz 1'}</td>
+                        <td class="p-3 text-slate-600 text-xs">${item.quizTitle || 'EduQuiz'}</td>
                         <td class="p-3 font-black text-indigo-600">${item.score}/100</td>
                         <td class="p-3">
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.score >= 70 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
@@ -633,11 +868,14 @@
             tbody.innerHTML = html;
         };
 
-        window.renderMaterials = function(materials) {
+        window.renderMaterials = function() {
+            const materials = (window.allMaterials || []).filter(m => m.classCode === window.currentClassCode || !m.classCode);
             const grid = document.getElementById('materi-grid');
             const statMateri = document.getElementById('stat-materi-count');
+            const isGuru = window.isGuruMode === true;
             
-            // Default material if none
+            statMateri.innerText = materials.length + 1;
+
             let defaultContent = `
                 <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 transition bg-slate-50/50">
                     <div class="flex items-start justify-between">
@@ -654,8 +892,6 @@
                 </div>
             `;
 
-            statMateri.innerText = materials.length + 1;
-
             if (materials.length === 0) {
                 grid.innerHTML = defaultContent;
                 return;
@@ -669,7 +905,10 @@
                             <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-3">
                                 <i class="fa-solid fa-book"></i>
                             </div>
-                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">Modul</span>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">Modul</span>
+                                ${isGuru ? `<button onclick="deleteDocItem('materials', '${m.id}')" class="text-rose-500 hover:text-rose-700 text-xs p-1 ml-1"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            </div>
                         </div>
                         <h3 class="font-bold text-slate-800">${m.title}</h3>
                         <p class="text-xs text-slate-500 mt-1">${m.desc}</p>
@@ -682,13 +921,119 @@
             grid.innerHTML = html;
         };
 
+        window.renderQuizQuestions = function() {
+            const questions = (window.allQuestions || []).filter(q => q.classCode === window.currentClassCode || !q.classCode);
+            const container = document.getElementById('quiz-questions-container');
+            const statKuis = document.getElementById('stat-kuis-count');
+            const isGuru = window.isGuruMode === true;
+
+            const defaultQuestions = [
+                { id: 'def1', question: '1. Urutan langkah-langkah logis untuk menyelesaikan masalah disebut...', optA: 'Dekomposisi', optB: 'Algoritma', optC: 'Abstraksi', key: 'B' },
+                { id: 'def2', question: '2. Komponen fisik komputer yang dapat disentuh dinamakan...', optA: 'Software', optB: 'Hardware', optC: 'Brainware', key: 'B' }
+            ];
+
+            const combinedList = [...defaultQuestions, ...questions];
+            statKuis.innerText = combinedList.length;
+
+            let html = '';
+            combinedList.forEach((q, idx) => {
+                const qNum = idx + 1;
+                html += `
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 relative">
+                        <div class="flex items-start justify-between">
+                            <p class="text-sm font-bold text-slate-800">${qNum}. ${q.question}</p>
+                            ${isGuru && q.id && !q.id.startsWith('def') ? `
+                                <button type="button" onclick="deleteDocItem('quiz_questions', '${q.id}')" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+                            ` : ''}
+                        </div>
+                        <div class="space-y-2 text-xs font-medium">
+                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
+                                <input type="radio" name="q_${q.id || idx}" value="A" required class="text-indigo-600">
+                                <span>A. ${q.optA}</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
+                                <input type="radio" name="q_${q.id || idx}" value="B" class="text-indigo-600">
+                                <span>B. ${q.optB}</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
+                                <input type="radio" name="q_${q.id || idx}" value="C" class="text-indigo-600">
+                                <span>C. ${q.optC}</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        };
+
+        window.renderAnnouncements = function() {
+            const list = (window.allAnnouncements || []).filter(a => a.classCode === window.currentClassCode || !a.classCode);
+            const container = document.getElementById('announcement-list');
+            const isGuru = window.isGuruMode === true;
+
+            let defaultAnn = `
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-amber-800">Pengajar: Agus Susanto, S.Kom</span>
+                        <span class="text-[10px] text-amber-600 font-medium">Hari ini</span>
+                    </div>
+                    <p class="text-sm text-slate-700 font-medium">Selamat datang di kelas ${window.currentClassCode}! Silakan klik "Gabung Kode Kelas" di atas agar terdaftar resmi.</p>
+                </div>
+            `;
+
+            if (list.length === 0) {
+                container.innerHTML = defaultAnn;
+                return;
+            }
+
+            let html = defaultAnn;
+            list.forEach(a => {
+                html += `
+                    <div class="p-4 bg-indigo-50/70 border border-indigo-200 rounded-2xl relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-indigo-900">Pengajar: Agus Susanto, S.Kom</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-indigo-600 font-medium">${a.date || 'Baru saja'}</span>
+                                ${isGuru ? `<button onclick="deleteDocItem('announcements', '${a.id}')" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-800 font-medium">${a.text}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        };
+
+        window.handleAddClass = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('class-name-input').value.trim();
+            const code = document.getElementById('class-code-input').value.trim().toUpperCase();
+            const subject = document.getElementById('class-subject-input').value.trim();
+            const teacher = document.getElementById('class-teacher-input').value.trim();
+
+            try {
+                if (db) {
+                    const classDocRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'classes'));
+                    await setDoc(classDocRef, { name, code, subject, teacher, createdAt: new Date().toISOString() });
+                }
+                closeModal('modal-add-class');
+                showToast(`Kelas ${name} (${code}) berhasil dibuat!`);
+                switchActiveClass(code);
+            } catch (err) {
+                showToast("Gagal membuat kelas: " + err.message);
+            }
+        };
+
         window.handleJoinClass = async function(event) {
             event.preventDefault();
             const nameInput = document.getElementById('join-name').value.trim();
-            const codeInput = document.getElementById('join-code').value.trim();
+            const codeInput = document.getElementById('join-code').value.trim().toUpperCase();
 
-            if (codeInput.toUpperCase() !== 'INF-XE') {
-                showToast('Kode kelas tidak valid! Gunakan kode: INF-XE');
+            const targetClass = window.classesList.find(c => c.code === codeInput);
+            if (!targetClass && codeInput !== 'INF-XE') {
+                showToast(`Kode kelas "${codeInput}" tidak ditemukan!`);
                 return;
             }
 
@@ -701,13 +1046,14 @@
                     const studentDocRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'students'));
                     await setDoc(studentDocRef, {
                         name: nameInput,
-                        classCode: codeInput.toUpperCase(),
+                        classCode: codeInput,
                         joinedAt: new Date().toISOString()
                     });
                 }
                 localStorage.setItem('student_name', nameInput);
                 closeModal('modal-join');
-                showToast(`Berhasil bergabung sebagai ${nameInput}!`);
+                showToast(`Berhasil bergabung ke ${codeInput} sebagai ${nameInput}!`);
+                switchActiveClass(codeInput);
             } catch (err) {
                 console.error(err);
                 showToast("Gagal bergabung: " + err.message);
@@ -718,10 +1064,14 @@
         };
 
         window.deleteStudent = async function(id) {
+            deleteDocItem('students', id);
+        };
+
+        window.deleteDocItem = async function(collectionName, id) {
             if (!db) return;
             try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-                showToast("Siswa berhasil dihapus");
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, id));
+                showToast("Item berhasil dihapus!");
             } catch (err) {
                 showToast("Gagal menghapus: " + err.message);
             }
@@ -735,12 +1085,48 @@
             try {
                 if (db) {
                     const materiRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'materials'));
-                    await setDoc(materiRef, { title, desc, createdAt: new Date().toISOString() });
+                    await setDoc(materiRef, { title, desc, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
                 }
                 closeModal('modal-add-materi');
                 showToast('Modul materi baru berhasil disimpan!');
             } catch (err) {
                 showToast('Gagal menyimpan modul: ' + err.message);
+            }
+        };
+
+        window.handleAddKuis = async function(e) {
+            e.preventDefault();
+            const question = document.getElementById('kuis-question').value;
+            const optA = document.getElementById('kuis-opt-a').value;
+            const optB = document.getElementById('kuis-opt-b').value;
+            const optC = document.getElementById('kuis-opt-c').value;
+            const key = document.getElementById('kuis-correct').value;
+
+            try {
+                if (db) {
+                    const qRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'quiz_questions'));
+                    await setDoc(qRef, { question, optA, optB, optC, key, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
+                }
+                closeModal('modal-add-kuis');
+                showToast('Soal kuis baru berhasil ditambahkan!');
+            } catch (err) {
+                showToast('Gagal menyimpan soal: ' + err.message);
+            }
+        };
+
+        window.handleAddPengumuman = async function(e) {
+            e.preventDefault();
+            const text = document.getElementById('announcement-text').value;
+
+            try {
+                if (db) {
+                    const annRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'announcements'));
+                    await setDoc(annRef, { text, classCode: window.currentClassCode, date: new Date().toLocaleDateString('id-ID') });
+                }
+                closeModal('modal-add-pengumuman');
+                showToast('Pengumuman baru diterbitkan!');
+            } catch (err) {
+                showToast('Gagal menerbitkan: ' + err.message);
             }
         };
 
@@ -752,20 +1138,30 @@
             }
             if (!studentName) return;
 
-            const q1 = document.querySelector('input[name="q1"]:checked')?.value;
-            const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+            const questions = (window.allQuestions || []).filter(q => q.classCode === window.currentClassCode || !q.classCode);
+            const defaultQuestions = [
+                { id: 'def1', key: 'B' },
+                { id: 'def2', key: 'B' }
+            ];
+            const allQ = [...defaultQuestions, ...questions];
 
-            let score = 0;
-            if (q1 === 'B') score += 50;
-            if (q2 === 'B') score += 50;
+            let correctCount = 0;
+            allQ.forEach((q, idx) => {
+                const nameKey = `q_${q.id || idx}`;
+                const val = document.querySelector(`input[name="${nameKey}"]:checked`)?.value;
+                if (val === q.key) correctCount++;
+            });
+
+            const score = Math.round((correctCount / allQ.length) * 100);
 
             try {
                 if (db) {
                     const quizDocRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'quiz_scores'));
                     await setDoc(quizDocRef, {
                         studentName: studentName,
-                        quizTitle: "EduQuiz 1 - Dasar Informatika",
+                        quizTitle: `EduQuiz (${window.currentClassCode})`,
                         score: score,
+                        classCode: window.currentClassCode,
                         date: new Date().toLocaleDateString('id-ID')
                     });
                 }
@@ -774,6 +1170,109 @@
                 showToast("Gagal mengirim kuis: " + err.message);
             }
         };
+
+        window.toggleChatDrawer = function() {
+            const drawer = document.getElementById('ai-chat-drawer');
+            drawer.classList.toggle('hidden');
+        };
+
+        window.sendQuickPrompt = function(promptText) {
+            document.getElementById('chat-input').value = promptText;
+            document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+        };
+
+        window.handleSendChatMessage = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+
+            // 1. Append User Bubble
+            const userBubble = document.createElement('div');
+            userBubble.className = "flex items-start justify-end gap-2";
+            userBubble.innerHTML = `
+                <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[85%]">
+                    <p>${escapeHtml(message)}</p>
+                </div>
+            `;
+            chatMessages.appendChild(userBubble);
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // 2. Append Loading Bot Bubble
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = "flex items-start gap-2 max-w-[85%]";
+            loadingBubble.innerHTML = `
+                <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold shrink-0 text-xs">🤖</div>
+                <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-500 italic flex items-center gap-2">
+                    <i class="fa-solid fa-spinner animate-spin text-indigo-600"></i> AI EduBot sedang berpikir...
+                </div>
+            `;
+            chatMessages.appendChild(loadingBubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // 3. Call Gemini 3 Flash API
+            try {
+                const systemPrompt = "Anda adalah AI EduBot Informatika, tutor pintar yang ramah dan membantu untuk siswa SMA/SMK belajar Informatika, koding, dan teknologi. Berikan jawaban yang jelas, singkat, mudah dipahami siswa, dan terstruktur dengan poin-poin jika perlu.";
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: message }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const botReply = result?.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, AI EduBot sedang tidak dapat memproses jawaban saat ini.";
+
+                loadingBubble.remove();
+
+                // Append Final Bot Reply
+                const botBubble = document.createElement('div');
+                botBubble.className = "flex items-start gap-2 max-w-[85%]";
+                botBubble.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold shrink-0 text-xs">🤖</div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 text-slate-800 shadow-sm leading-relaxed space-y-1">
+                        <p class="font-bold text-indigo-700 text-[11px]">AI EduBot</p>
+                        <div>${formatBotText(botReply)}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(botBubble);
+            } catch (err) {
+                console.error("Gemini API Error:", err);
+                loadingBubble.remove();
+                const errBubble = document.createElement('div');
+                errBubble.className = "flex items-start gap-2 max-w-[85%]";
+                errBubble.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg bg-rose-600 text-white flex items-center justify-center font-bold shrink-0 text-xs">⚠️</div>
+                    <div class="bg-rose-50 text-rose-700 p-3 rounded-2xl rounded-tl-none border border-rose-200">
+                        Gagal menghubungkan ke AI EduBot: ${err.message}
+                    </div>
+                `;
+                chatMessages.appendChild(errBubble);
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function formatBotText(str) {
+            let formatted = escapeHtml(str);
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/\n/g, '<br>');
+            return formatted;
+        }
 
         window.onload = function() {
             initFirebase();
@@ -828,10 +1327,12 @@
                 guruElements.forEach(el => el.classList.add('hidden'));
             }
 
-            // Refresh table action column if function exists
+            // Refresh UI tables & lists
             if (typeof window.renderStudentTable === 'function') {
-                const searchVal = document.getElementById('search-input')?.value || '';
-                window.filterStudents && window.filterStudents();
+                window.renderStudentTable();
+                window.renderMaterials && window.renderMaterials();
+                window.renderQuizQuestions && window.renderQuizQuestions();
+                window.renderAnnouncements && window.renderAnnouncements();
             }
         }
 
@@ -841,7 +1342,7 @@
 
         function openModalGuru(id) {
             if (!window.isGuruMode) {
-                showToast("Hanya Guru yang dapat menambah konten!");
+                showToast("Hanya Guru yang dapat mengakses fitur ini!");
                 return;
             }
             openModal(id);
@@ -874,7 +1375,23 @@
         }
 
         function exportCSV() {
-            showToast('Mengunduh rekap nilai CSV...');
+            const scores = window.allScores || [];
+            if (scores.length === 0) {
+                showToast('Belum ada data nilai untuk diunduh');
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Nama Siswa,Kuis,Nilai,Tanggal\n";
+            scores.forEach(s => {
+                csvContent += `"${s.studentName}","${s.quizTitle}",${s.score},"${s.date}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_Nilai_${window.currentClassCode}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Rekap nilai CSV berhasil diunduh!');
         }
 
         function showToast(msg) {
