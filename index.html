@@ -125,10 +125,10 @@
                         <i class="fa-solid fa-chart-line"></i> Rekap Nilai & Anggota
                     </button>
                     <button onclick="switchTab('tab-materi')" id="btn-tab-materi" class="tab-btn text-slate-600 hover:bg-slate-100 font-medium px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2 whitespace-nowrap">
-                        <i class="fa-solid fa-book-open"></i> Bahan Ajar
+                        <i class="fa-solid fa-book-open"></i> Bahan Ajar & Link
                     </button>
                     <button onclick="switchTab('tab-kuis')" id="btn-tab-kuis" class="tab-btn text-slate-600 hover:bg-slate-100 font-medium px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2 whitespace-nowrap">
-                        <i class="fa-solid fa-gamepad"></i> EduQuiz
+                        <i class="fa-solid fa-gamepad"></i> EduQuiz (A-D & Quizizz)
                     </button>
                     <button onclick="switchTab('tab-pengumuman')" id="btn-tab-pengumuman" class="tab-btn text-slate-600 hover:bg-slate-100 font-medium px-4 py-2.5 rounded-xl text-sm transition flex items-center gap-2 whitespace-nowrap">
                         <i class="fa-solid fa-bullhorn"></i> Pengumuman
@@ -230,12 +230,15 @@
                     <div id="content-tab-materi" class="tab-content hidden space-y-4">
                         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                             <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-folder-open text-indigo-600"></i> Modul & Bahan Ajar (<span class="class-label-inline">INFORMATIKA X.E</span>)
-                                </h2>
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-folder-open text-indigo-600"></i> Modul & Bahan Ajar (<span class="class-label-inline">INFORMATIKA X.E</span>)
+                                    </h2>
+                                    <p class="text-xs text-slate-500">Bahan bacaan, tautan YouTube, Drive, maupun referensi eksternal.</p>
+                                </div>
                                 <!-- Teacher action to add material -->
                                 <button onclick="openModalGuru('modal-add-materi')" class="guru-only hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-plus"></i> Tambah Modul Baru
+                                    <i class="fa-solid fa-plus"></i> Tambah Modul & Link
                                 </button>
                             </div>
                             <div id="materi-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -245,25 +248,47 @@
                     </div>
 
                     <!-- TAB 3: EDUQUIZ -->
-                    <div id="content-tab-kuis" class="tab-content hidden space-y-4">
+                    <div id="content-tab-kuis" class="tab-content hidden space-y-6">
+                        <!-- SECTION 1: KUIS EKSTERNAL (QUIZIZZ, KAHOOT, GOOGLE FORM) -->
                         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
-                            <div class="flex items-center justify-between mb-2">
-                                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                    <i class="fa-solid fa-gamepad text-indigo-600"></i> EduQuiz Interactive (<span class="class-label-inline">INFORMATIKA X.E</span>)
-                                </h2>
-                                <button onclick="openModalGuru('modal-add-kuis')" class="guru-only hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-plus"></i> Tambah Soal Kuis
+                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-puzzle-piece text-purple-600"></i> Kuis Pihak Ke-3 (Quizizz, Kahoot, Google Form)
+                                    </h2>
+                                    <p class="text-xs text-slate-500">Akses langsung ke kuis interaktif eksternal yang disiapkan Pak Agus.</p>
+                                </div>
+                                <button onclick="openModalGuru('modal-add-ext-quiz')" class="guru-only hidden bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Tambah Link Quizizz / GForm
                                 </button>
                             </div>
-                            <p class="text-xs text-slate-500 mb-6">Kerjakan kuis interaktif ini. Hasil nilai Anda akan langsung terkirim ke dashboard Pak Agus!</p>
 
-                            <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-6">
+                            <div id="ext-quiz-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Dynamic External Quizzes -->
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2: EDUQUIZ NATIVE (A, B, C, D) -->
+                        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-gamepad text-indigo-600"></i> EduQuiz Interaktif (Pilihan A - D)
+                                    </h2>
+                                    <p class="text-xs text-slate-500">Kerjakan kuis 4 opsi ini. Nilai Anda akan langsung terkirim ke rekap nilai Pak Agus!</p>
+                                </div>
+                                <button onclick="openModalGuru('modal-add-kuis')" class="guru-only hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> Tambah Soal (A-D)
+                                </button>
+                            </div>
+
+                            <form id="quiz-form" onsubmit="submitQuiz(event)" class="space-y-6 mt-4">
                                 <div id="quiz-questions-container" class="space-y-6">
                                     <!-- Dynamic Questions -->
                                 </div>
 
                                 <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-2xl transition shadow-md flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-paper-plane"></i> Kirim Jawaban Kuis
+                                    <i class="fa-solid fa-paper-plane"></i> Kirim Jawaban Kuis (A-D)
                                 </button>
                             </form>
                         </div>
@@ -524,11 +549,11 @@
         </div>
     </div>
 
-    <!-- MODAL 4: TAMBAH MATERI BARU (GURU ONLY) -->
+    <!-- MODAL 4: TAMBAH MATERI BARU + LINK (GURU ONLY) -->
     <div id="modal-add-materi" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-indigo-600"></i> Tambah Modul Materi</h3>
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-indigo-600"></i> Tambah Modul & Link Materi</h3>
                 <button onclick="closeModal('modal-add-materi')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="handleAddMateri(event)" class="mt-4 space-y-3">
@@ -538,18 +563,24 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Deskripsi Ringkas</label>
-                    <textarea id="materi-desc" required rows="3" placeholder="Penjelasan singkat mengenai materi..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500"></textarea>
+                    <textarea id="materi-desc" required rows="2" placeholder="Penjelasan singkat mengenai materi..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Simpan Modul</button>
+                <div>
+                    <label class="block text-xs font-bold text-indigo-700 uppercase mb-1">
+                        <i class="fa-solid fa-link text-indigo-500"></i> Link Tambahan (YouTube / Drive / Web) <span class="text-slate-400 font-normal">(Opsional)</span>
+                    </label>
+                    <input type="url" id="materi-link" placeholder="https://youtube.com/watch?v=... atau link Drive" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-indigo-700 font-medium focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Simpan Modul Materi</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 5: TAMBAH SOAL KUIS (GURU ONLY) -->
+    <!-- MODAL 5: TAMBAH SOAL KUIS NATIVE (PILIHAN A - D) -->
     <div id="modal-add-kuis" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-indigo-600"></i> Tambah Soal Kuis Baru</h3>
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-plus-circle text-indigo-600"></i> Tambah Soal (A, B, C, D)</h3>
                 <button onclick="closeModal('modal-add-kuis')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="handleAddKuis(event)" class="mt-4 space-y-3">
@@ -570,19 +601,58 @@
                     <input type="text" id="kuis-opt-c" required placeholder="Contoh: Harddisk" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilihan D</label>
+                    <input type="text" id="kuis-opt-d" required placeholder="Contoh: Monitor" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kunci Jawaban Benar</label>
                     <select id="kuis-correct" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold">
                         <option value="A">Pilihan A</option>
                         <option value="B" selected>Pilihan B</option>
                         <option value="C">Pilihan C</option>
+                        <option value="D">Pilihan D</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Tambah Soal</button>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Simpan Soal A-D</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 6: TAMBAH PENGUMUMAN (GURU ONLY) -->
+    <!-- MODAL 6: TAMBAH KUIS PIHAK KE-3 (QUIZIZZ, KAHOOT, GFORM) -->
+    <div id="modal-add-ext-quiz" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-link text-purple-600"></i> Tambah Link Quizizz / GForm</h3>
+                <button onclick="closeModal('modal-add-ext-quiz')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="handleAddExtQuiz(event)" class="mt-4 space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Judul Kuis Eksternal</label>
+                    <input type="text" id="ext-quiz-title" required placeholder="Contoh: Kuis Interaktif Quizizz Bab 2" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Platform Kuis</label>
+                    <select id="ext-quiz-platform" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold">
+                        <option value="Quizizz">Quizizz</option>
+                        <option value="Kahoot">Kahoot</option>
+                        <option value="Google Form">Google Form</option>
+                        <option value="LiveWorksheets">LiveWorksheets / Website</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-purple-700 uppercase mb-1">Link URL Kuis (HTTP / HTTPS)</label>
+                    <input type="url" id="ext-quiz-url" required placeholder="https://quizizz.com/join?gc=..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-purple-700 font-medium focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Deskripsi Singkat</label>
+                    <input type="text" id="ext-quiz-desc" placeholder="Contoh: Masukkan kode game 123456 di Quizizz" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-purple-500">
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm transition">Terbitkan Link Kuis</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 7: TAMBAH PENGUMUMAN (GURU ONLY) -->
     <div id="modal-add-pengumuman" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
@@ -729,7 +799,16 @@
                 renderQuizQuestions();
             }, (err) => console.error("Quiz questions error:", err));
 
-            /* 5. Announcements Realtime Listener */
+            /* 5. External Quizzes Realtime Listener */
+            const extQuizColRef = collection(db, 'artifacts', appId, 'public', 'data', 'ext_quizzes');
+            onSnapshot(extQuizColRef, (snapshot) => {
+                const extQuizzes = [];
+                snapshot.forEach((doc) => extQuizzes.push({ id: doc.id, ...doc.data() }));
+                window.allExtQuizzes = extQuizzes;
+                renderExtQuizzes();
+            }, (err) => console.error("Ext Quizzes error:", err));
+
+            /* 6. Announcements Realtime Listener */
             const annColRef = collection(db, 'artifacts', appId, 'public', 'data', 'announcements');
             onSnapshot(annColRef, (snapshot) => {
                 const announcements = [];
@@ -785,6 +864,7 @@
             renderQuizScores();
             renderMaterials();
             renderQuizQuestions();
+            renderExtQuizzes();
             renderAnnouncements();
             showToast(`Beralih ke kelas: ${code}`);
         };
@@ -877,18 +957,22 @@
             statMateri.innerText = materials.length + 1;
 
             let defaultContent = `
-                <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 transition bg-slate-50/50">
-                    <div class="flex items-start justify-between">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg mb-3">
-                            <i class="fa-solid fa-network-wired"></i>
+                <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 transition bg-slate-50/50 flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg mb-2">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </div>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Bab 1</span>
                         </div>
-                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Bab 1</span>
+                        <h3 class="font-bold text-slate-800">Berpikir Komputasional</h3>
+                        <p class="text-xs text-slate-500 mt-1">Dekomposisi, Pengenalan Pola, Abstraksi, dan Algoritma.</p>
                     </div>
-                    <h3 class="font-bold text-slate-800">Berpikir Komputasional</h3>
-                    <p class="text-xs text-slate-500 mt-1">Dekomposisi, Pengenalan Pola, Abstraksi, dan Algoritma.</p>
-                    <button onclick="showToast('Membuka Modul 1')" class="mt-4 w-full text-xs font-bold text-indigo-600 hover:bg-indigo-50 py-2 rounded-xl transition border border-indigo-200">
-                        <i class="fa-solid fa-download mr-1"></i> Pelajari Materi
-                    </button>
+                    <div class="pt-2 border-t border-slate-200/60 flex items-center gap-2">
+                        <button onclick="showToast('Membuka Modul 1')" class="w-full text-xs font-bold text-indigo-600 hover:bg-indigo-50 py-2 rounded-xl transition border border-indigo-200">
+                            <i class="fa-solid fa-book-reader mr-1"></i> Pelajari Materi
+                        </button>
+                    </div>
                 </div>
             `;
 
@@ -899,22 +983,34 @@
 
             let html = defaultContent;
             materials.forEach((m) => {
+                const linkBtn = m.link ? `
+                    <a href="${m.link}" target="_blank" class="w-full text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 py-2 rounded-xl transition flex items-center justify-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Link / Video
+                    </a>
+                ` : `
+                    <button onclick="showToast('Membuka: ${m.title}')" class="w-full text-xs font-bold text-blue-600 hover:bg-blue-50 py-2 rounded-xl transition border border-blue-200">
+                        <i class="fa-solid fa-book-open mr-1"></i> Baca Modul
+                    </button>
+                `;
+
                 html += `
-                    <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 transition bg-slate-50/50 relative">
-                        <div class="flex items-start justify-between">
-                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-3">
-                                <i class="fa-solid fa-book"></i>
+                    <div class="p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 transition bg-slate-50/50 flex flex-col justify-between space-y-3 relative">
+                        <div>
+                            <div class="flex items-start justify-between">
+                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-2">
+                                    <i class="fa-solid fa-book"></i>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">Modul</span>
+                                    ${isGuru ? `<button onclick="deleteDocItem('materials', '${m.id}')" class="text-rose-500 hover:text-rose-700 text-xs p-1 ml-1"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
                             </div>
-                            <div class="flex items-center gap-1">
-                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">Modul</span>
-                                ${isGuru ? `<button onclick="deleteDocItem('materials', '${m.id}')" class="text-rose-500 hover:text-rose-700 text-xs p-1 ml-1"><i class="fa-solid fa-trash"></i></button>` : ''}
-                            </div>
+                            <h3 class="font-bold text-slate-800">${m.title}</h3>
+                            <p class="text-xs text-slate-500 mt-1">${m.desc}</p>
                         </div>
-                        <h3 class="font-bold text-slate-800">${m.title}</h3>
-                        <p class="text-xs text-slate-500 mt-1">${m.desc}</p>
-                        <button onclick="showToast('Membuka: ${m.title}')" class="mt-4 w-full text-xs font-bold text-blue-600 hover:bg-blue-50 py-2 rounded-xl transition border border-blue-200">
-                            <i class="fa-solid fa-download mr-1"></i> Pelajari Materi
-                        </button>
+                        <div class="pt-2 border-t border-slate-200/60">
+                            ${linkBtn}
+                        </div>
                     </div>
                 `;
             });
@@ -928,8 +1024,8 @@
             const isGuru = window.isGuruMode === true;
 
             const defaultQuestions = [
-                { id: 'def1', question: '1. Urutan langkah-langkah logis untuk menyelesaikan masalah disebut...', optA: 'Dekomposisi', optB: 'Algoritma', optC: 'Abstraksi', key: 'B' },
-                { id: 'def2', question: '2. Komponen fisik komputer yang dapat disentuh dinamakan...', optA: 'Software', optB: 'Hardware', optC: 'Brainware', key: 'B' }
+                { id: 'def1', question: '1. Urutan langkah-langkah logis untuk menyelesaikan masalah disebut...', optA: 'Dekomposisi', optB: 'Algoritma', optC: 'Abstraksi', optD: 'Pengenalan Pola', key: 'B' },
+                { id: 'def2', question: '2. Komponen fisik komputer yang dapat disentuh dinamakan...', optA: 'Software', optB: 'Hardware', optC: 'Brainware', optD: 'Malware', key: 'B' }
             ];
 
             const combinedList = [...defaultQuestions, ...questions];
@@ -946,20 +1042,76 @@
                                 <button type="button" onclick="deleteDocItem('quiz_questions', '${q.id}')" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>
                             ` : ''}
                         </div>
-                        <div class="space-y-2 text-xs font-medium">
-                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-medium">
+                            <label class="flex items-center space-x-2 p-2.5 rounded-xl bg-white hover:bg-indigo-50/50 cursor-pointer border border-slate-200 transition">
                                 <input type="radio" name="q_${q.id || idx}" value="A" required class="text-indigo-600">
-                                <span>A. ${q.optA}</span>
+                                <span><strong>A.</strong> ${q.optA}</span>
                             </label>
-                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
+                            <label class="flex items-center space-x-2 p-2.5 rounded-xl bg-white hover:bg-indigo-50/50 cursor-pointer border border-slate-200 transition">
                                 <input type="radio" name="q_${q.id || idx}" value="B" class="text-indigo-600">
-                                <span>B. ${q.optB}</span>
+                                <span><strong>B.</strong> ${q.optB}</span>
                             </label>
-                            <label class="flex items-center space-x-2 p-2 rounded-xl hover:bg-white cursor-pointer border border-transparent hover:border-slate-200">
+                            <label class="flex items-center space-x-2 p-2.5 rounded-xl bg-white hover:bg-indigo-50/50 cursor-pointer border border-slate-200 transition">
                                 <input type="radio" name="q_${q.id || idx}" value="C" class="text-indigo-600">
-                                <span>C. ${q.optC}</span>
+                                <span><strong>C.</strong> ${q.optC}</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-2.5 rounded-xl bg-white hover:bg-indigo-50/50 cursor-pointer border border-slate-200 transition">
+                                <input type="radio" name="q_${q.id || idx}" value="D" class="text-indigo-600">
+                                <span><strong>D.</strong> ${q.optD || 'Pilihan D'}</span>
                             </label>
                         </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        };
+
+        window.renderExtQuizzes = function() {
+            const list = (window.allExtQuizzes || []).filter(q => q.classCode === window.currentClassCode || !q.classCode);
+            const container = document.getElementById('ext-quiz-grid');
+            const isGuru = window.isGuruMode === true;
+
+            const defaultExt = `
+                <div class="p-4 rounded-2xl border border-purple-200 bg-purple-50/40 flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-black uppercase tracking-wider bg-purple-600 text-white px-2.5 py-0.5 rounded-full">Quizizz</span>
+                            <i class="fa-solid fa-bolt text-purple-600"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">Quizizz Informatika Interaktif</h4>
+                        <p class="text-xs text-slate-500 mt-1">Latihan soal cepat dan seru via platform Quizizz.</p>
+                    </div>
+                    <a href="https://quizizz.com/join" target="_blank" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-2 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-gamepad"></i> Mainkan di Quizizz
+                    </a>
+                </div>
+            `;
+
+            if (list.length === 0) {
+                container.innerHTML = defaultExt;
+                return;
+            }
+
+            let html = defaultExt;
+            list.forEach(q => {
+                let badgeBg = 'bg-purple-600';
+                if (q.platform === 'Kahoot') badgeBg = 'bg-rose-600';
+                if (q.platform === 'Google Form') badgeBg = 'bg-indigo-600';
+
+                html += `
+                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 flex flex-col justify-between space-y-3 relative">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-black uppercase tracking-wider ${badgeBg} text-white px-2.5 py-0.5 rounded-full">${q.platform || 'Eksternal'}</span>
+                                ${isGuru ? `<button onclick="deleteDocItem('ext_quizzes', '${q.id}')" class="text-rose-500 hover:text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>` : '<i class="fa-solid fa-external-link-alt text-slate-400 text-xs"></i>'}
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm">${q.title}</h4>
+                            <p class="text-xs text-slate-500 mt-1">${q.desc || ''}</p>
+                        </div>
+                        <a href="${q.url}" target="_blank" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-2 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-play"></i> Buka ${q.platform || 'Kuis'}
+                        </a>
                     </div>
                 `;
             });
@@ -1081,11 +1233,12 @@
             e.preventDefault();
             const title = document.getElementById('materi-title').value;
             const desc = document.getElementById('materi-desc').value;
+            const link = document.getElementById('materi-link').value.trim();
 
             try {
                 if (db) {
                     const materiRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'materials'));
-                    await setDoc(materiRef, { title, desc, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
+                    await setDoc(materiRef, { title, desc, link, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
                 }
                 closeModal('modal-add-materi');
                 showToast('Modul materi baru berhasil disimpan!');
@@ -1100,17 +1253,37 @@
             const optA = document.getElementById('kuis-opt-a').value;
             const optB = document.getElementById('kuis-opt-b').value;
             const optC = document.getElementById('kuis-opt-c').value;
+            const optD = document.getElementById('kuis-opt-d').value;
             const key = document.getElementById('kuis-correct').value;
 
             try {
                 if (db) {
                     const qRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'quiz_questions'));
-                    await setDoc(qRef, { question, optA, optB, optC, key, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
+                    await setDoc(qRef, { question, optA, optB, optC, optD, key, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
                 }
                 closeModal('modal-add-kuis');
-                showToast('Soal kuis baru berhasil ditambahkan!');
+                showToast('Soal kuis baru (A-D) berhasil ditambahkan!');
             } catch (err) {
                 showToast('Gagal menyimpan soal: ' + err.message);
+            }
+        };
+
+        window.handleAddExtQuiz = async function(e) {
+            e.preventDefault();
+            const title = document.getElementById('ext-quiz-title').value;
+            const platform = document.getElementById('ext-quiz-platform').value;
+            const url = document.getElementById('ext-quiz-url').value;
+            const desc = document.getElementById('ext-quiz-desc').value;
+
+            try {
+                if (db) {
+                    const extRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'ext_quizzes'));
+                    await setDoc(extRef, { title, platform, url, desc, classCode: window.currentClassCode, createdAt: new Date().toISOString() });
+                }
+                closeModal('modal-add-ext-quiz');
+                showToast(`Link Kuis ${platform} berhasil diterbitkan!`);
+            } catch (err) {
+                showToast('Gagal menerbitkan kuis eksternal: ' + err.message);
             }
         };
 
@@ -1332,6 +1505,7 @@
                 window.renderStudentTable();
                 window.renderMaterials && window.renderMaterials();
                 window.renderQuizQuestions && window.renderQuizQuestions();
+                window.renderExtQuizzes && window.renderExtQuizzes();
                 window.renderAnnouncements && window.renderAnnouncements();
             }
         }
